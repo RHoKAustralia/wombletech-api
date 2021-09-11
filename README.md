@@ -14,8 +14,8 @@ Create two dynamodb tables (expect this to change)
 - sam build
 - aws-vault exec <profile> -- sam deploy 
 
-# local testing (needs work)
-1. aws-vault exec <profile> -- sam local start-api 
+# local testing
+1. aws-vault exec <profile> -- sam local start-api --enn-vars env.json
 
 # security
 None as yet - this is a todo
