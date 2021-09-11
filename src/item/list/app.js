@@ -18,7 +18,6 @@ const ddb = new AWS.DynamoDB.DocumentClient({region: process.env.TARGET_REGION})
  */
 exports.lambdaHandler = async (event, context, callback) => {
     try {
-    
         await readMessage().then(data => {
             // Writes each item to the console
             data.Items.forEach(function(item) {
@@ -45,7 +44,7 @@ exports.lambdaHandler = async (event, context, callback) => {
 
 function readMessage() {
     const params = {
-        TableName: 'wombletech_donation',
+        TableName: 'wombletech_item',
         Limit: 10
     }
     return ddb.scan(params).promise();
