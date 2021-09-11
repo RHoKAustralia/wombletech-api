@@ -48,7 +48,7 @@ exports.lambdaHandler = async (event, context, callback) => {
 
 function readMessage() {
   const params = {
-    TableName: "wombletech_item",
+    TableName: "wombletech_donations",
     Limit: 10,
   };
   return ddb.scan(params).promise();

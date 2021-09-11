@@ -6,9 +6,8 @@ Currently using AWS region ap-southeast-2
 - Configure ~/.aws/config
 
 # AWS prep
-Create two dynamodb tables (expect this to change)
-1. wombletech_donation (donor_email, donation_id)
-2. wombletech_item (donation_id, item_id)
+Create one dynamodb tables (expect this to change)
+1. wombletech_donations (donationId)
 
 # instuctions
 - sam build
