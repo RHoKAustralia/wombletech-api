@@ -1,7 +1,12 @@
+Currently using AWS region ap-southeast-2 
 # pre-requisites (TODO)
 Configure ~/.aws/config
 SAM CLI
 AWS-VAULT CLI
+
+- two dynamodb tables 
+1. wombletech_donation (doner_email, donation_id)
+2. wombletech_item (donation_id, item_id)
 
 # instuctions
 sam build
@@ -10,11 +15,8 @@ aws-vault exec mm-admin-sbx -- sam deploy
 # local testing
 aws-vault exec mm-admin-sbx -- sam local start-api 
 
-
-
-
-
-
+# security
+None - this is todo
 
 # WombletechRHoK
 
