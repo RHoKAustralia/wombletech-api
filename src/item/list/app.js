@@ -20,26 +20,16 @@ const ddb = new AWS.DynamoDB.DocumentClient({
  */
 exports.lambdaHandler = async (event, context, callback) => {
   try {
-    await readMessage()
-      .then((data) => {
-        // Writes each item to the console
-        data.Items.forEach(function (item) {
-          console.log(item.message);
-        });
-        callback(null, {
-          // If success return 200, and items
-          statusCode: 200,
-          body: JSON.stringify(data.Items),
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-          },
-        });
-      })
-      .catch((err) => {
-        // If an error occurs write to the console
-        console.error(err);
-      });
+    let data = await readMessage();
+    let response = {
+      statusCode: 200,
+      body: JSON.stringify(data.Items, null, 2),
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+      }
+    }
+    return response;
   } catch (err) {
     console.log(err);
     return err;
