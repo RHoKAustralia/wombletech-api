@@ -1,10 +1,10 @@
 Currently using AWS region ap-southeast-2 
 # pre-requisites (TODO)
-Configure ~/.aws/config
-SAM CLI
-AWS-VAULT CLI
+- SAM CLI - https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html
+- AWS-VAULT CLI - https://github.com/99designs/aws-vault
+- Configure ~/.aws/config
 
-- two dynamodb tables 
+- Create two dynamodb tables (expect this to change)
 1. wombletech_donation (doner_email, donation_id)
 2. wombletech_item (donation_id, item_id)
 
