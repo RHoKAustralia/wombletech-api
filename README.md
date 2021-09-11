@@ -2,21 +2,28 @@ Currently using AWS region ap-southeast-2
 # pre-requisites (TODO)
 - SAM CLI - https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html
 - AWS-VAULT CLI - https://github.com/99designs/aws-vault
+- Docker (required for local testing of the api)
 - Configure ~/.aws/config
 
-- Create two dynamodb tables (expect this to change)
-1. wombletech_donation (doner_email, donation_id)
+# AWS prep
+Create two dynamodb tables (expect this to change)
+1. wombletech_donation (donor_email, donation_id)
 2. wombletech_item (donation_id, item_id)
 
 # instuctions
-sam build
-aws-vault exec mm-admin-sbx -- sam deploy 
+- sam build
+- aws-vault exec <profile> -- sam deploy 
 
-# local testing
-aws-vault exec mm-admin-sbx -- sam local start-api 
+# local testing (needs work)
+1. aws-vault exec <profile> -- sam local start-api 
 
 # security
-None - this is todo
+None as yet - this is a todo
+
+# clean up
+1. aws cloudformation delete-stack --stack-name <Stack-Name>
+2. non-Prod: remove the dynamodb tables
+
 
 # WombletechRHoK
 
