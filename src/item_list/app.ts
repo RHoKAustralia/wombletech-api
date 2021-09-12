@@ -1,3 +1,8 @@
+import {
+  APIGatewayProxyEvent,
+  APIGatewayProxyResult,
+  Context,
+} from "aws-lambda";
 import AWS from "aws-sdk";
 import { serialize } from "../lib/serialize";
 const ddb = new AWS.DynamoDB.DocumentClient({
@@ -19,7 +24,10 @@ const ddb = new AWS.DynamoDB.DocumentClient({
  * @returns {Object} object - API Gateway Lambda Proxy Output Format
  *
  */
-exports.lambdaHandler = async (event:any, context:any) => {
+exports.lambdaHandler = async (
+  event: APIGatewayProxyEvent,
+  context: Context
+): Promise<APIGatewayProxyResult> => {
   try {
     let data = await readMessage();
     let response = {
@@ -28,12 +36,15 @@ exports.lambdaHandler = async (event:any, context:any) => {
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
-      }
-    }
+      },
+    };
     return response;
   } catch (err) {
     console.log(err);
-    return err;
+    return {
+      statusCode: 500,
+      body: "Go look at the logs...",
+    };
   }
 };
 

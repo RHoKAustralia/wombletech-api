@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "lint-fix": "npx prettier --write src/**/*.js",
+    "lint-fix": "npx prettier --write src/**/*.ts",
     "build": "webpack"
   },
   "devDependencies": {
