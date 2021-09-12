@@ -1,26 +1,26 @@
-Currently using AWS region ap-southeast-2 
+Currently using AWS region ap-southeast-2
 # pre-requisites (TODO)
 - SAM CLI - https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html
 - AWS-VAULT CLI - https://github.com/99designs/aws-vault
 - Docker (required for local testing of the api)
-- Configure ~/.aws/config
+- Configure `~/.aws/config`
 
-# AWS prep
+## AWS prep
 Create one dynamodb tables (expect this to change)
 1. wombletech_donations (donationId)
 
-# instuctions (build and deploy)
-1. yarn build
-2. aws-vault exec <profile> -- sam deploy 
+## instructions (build and deploy)
+1. `yarn build`
+2. `aws-vault exec <profile> -- sam deploy`
 
-# local testing (build and deploy)
-1. aws-vault exec <profile> -- sam local start-api --env-vars env.json
+## local testing (build and deploy)
+1. `aws-vault exec <profile> -- sam local start-api --env-vars env.json`
 
-# security
+## security
 None as yet - this is a todo
 
-# clean up
-1. aws cloudformation delete-stack --stack-name <Stack-Name>
+## clean up
+1. `aws cloudformation delete-stack --stack-name <Stack-Name>`
 2. non-Prod: remove the dynamodb tables
 
 
@@ -30,7 +30,7 @@ This project contains source code and supporting files for a serverless applicat
 
 - hello-world - Code for the application's Lambda function.
 - events - Invocation events that you can use to invoke the function.
-- hello-world/tests - Unit tests for the application code. 
+- hello-world/tests - Unit tests for the application code.
 - template.yaml - A template that defines the application's AWS resources.
 
 The application uses several AWS resources, including Lambda functions and an API Gateway API. These resources are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates your application code.
