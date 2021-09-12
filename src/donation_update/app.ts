@@ -6,7 +6,6 @@ import {
 import AWS from "aws-sdk";
 import { Donation } from "../lib/donation";
 import { serialize } from "../lib/serialize";
-const { v4: uuidv4 } = require("uuid");
 
 const ddb = new AWS.DynamoDB.DocumentClient({
   region: process.env.TARGET_REGION,
@@ -34,14 +33,21 @@ exports.lambdaHandler = async (
   try {
     console.log(`body: ${event.body}`);
     const donation: Donation = JSON.parse(event.body ?? "{}");
-    donation.donationId ??= uuidv4().toString();
+    if (!donation.donationId) {
+      throw new Error(`Invalid donationIdentifer supplied`);
+    }
 
     const params = {
       TableName: "wombletech_donations",
-      Item: donation,
+      Key: { donationId: donation.donationId ?? "" },
+      UpdateExpression: "set email = :email",
+      ExpressionAttributeValues: {
+        ":email": donation.email
+      },
+      ReturnValues: "UPDATED_NEW",
     };
 
-    await ddb.put(params).promise();
+    await ddb.update(params).promise();
 
     let response = {
       statusCode: 200,

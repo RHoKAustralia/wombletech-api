@@ -40,7 +40,23 @@ Resources:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /item_list
+            Path: /donation_submit
+            Method: post
+      Role: !GetAtt WombletechRHoKFunctionRole.Arn
+
+  UpdateDonationFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      Handler: app.lambdaHandler
+      CodeUri: dist/donation_update
+      Environment:
+        Variables:
+          TARGET_REGION: !Sub '${AWS::Region}'
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /donation_update
             Method: post
       Role: !GetAtt WombletechRHoKFunctionRole.Arn
 
@@ -88,8 +104,11 @@ Outputs:
     Description: "Lambda Function To list donations"
     Value: !GetAtt ListDonationsFunction.Arn
   SubmitDonationFunction:
-    Description: "Lambda Function To list donated items"
+    Description: "Lambda Function To submit donations"
     Value: !GetAtt SubmitDonationFunction.Arn
+  UpdateDonationFunction:
+    Description: "Lambda Function To update donations"
+    Value: !GetAtt UpdateDonationFunction.Arn
   WombletechRHoKFunctionRole:
     Description: "IAM Role created for Lambdas"
     Value: !GetAtt WombletechRHoKFunctionRole.Arn
