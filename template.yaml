@@ -28,11 +28,11 @@ Resources:
             Method: get
       Role: !GetAtt WombletechRHoKFunctionRole.Arn
 
-  ListItemsFunction:
+  SubmitDonationFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       Handler: app.lambdaHandler
-      CodeUri: dist/item_list
+      CodeUri: dist/donation_submit
       Environment:
         Variables:
           TARGET_REGION: !Sub '${AWS::Region}'
@@ -41,7 +41,7 @@ Resources:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /item_list
-            Method: get
+            Method: post
       Role: !GetAtt WombletechRHoKFunctionRole.Arn
 
   WombletechRHoKFunctionRole:
@@ -87,9 +87,9 @@ Outputs:
   ListDonationsFunction:
     Description: "Lambda Function To list donations"
     Value: !GetAtt ListDonationsFunction.Arn
-  ListItemsFunction:
+  SubmitDonationFunction:
     Description: "Lambda Function To list donated items"
-    Value: !GetAtt ListItemsFunction.Arn
+    Value: !GetAtt SubmitDonationFunction.Arn
   WombletechRHoKFunctionRole:
     Description: "IAM Role created for Lambdas"
     Value: !GetAtt WombletechRHoKFunctionRole.Arn

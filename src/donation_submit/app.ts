@@ -4,7 +4,9 @@ import {
   Context,
 } from "aws-lambda";
 import AWS from "aws-sdk";
-import { serialize } from "../lib/serialize";
+import { Donation } from "../lib/donation";
+const { v4: uuidv4 } = require("uuid");
+
 const ddb = new AWS.DynamoDB.DocumentClient({
   region: process.env.TARGET_REGION,
 });
@@ -29,10 +31,19 @@ exports.lambdaHandler = async (
   context: Context
 ): Promise<APIGatewayProxyResult> => {
   try {
-    let data = await readMessage();
+    const donation: Donation = JSON.parse(event.body ?? '{}');
+    donation.donationId ??= uuidv4().toString();
+
+    const params = {
+      TableName: "wombletech_donations",
+      Item: donation
+    };
+
+    await ddb.put(params).promise();
+
     let response = {
       statusCode: 200,
-      body: serialize(data.Items),
+      body: "",
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
@@ -47,11 +58,3 @@ exports.lambdaHandler = async (
     };
   }
 };
-
-function readMessage() {
-  const params = {
-    TableName: "wombletech_donations",
-    Limit: 10,
-  };
-  return ddb.scan(params).promise();
-}
