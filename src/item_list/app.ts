@@ -1,4 +1,5 @@
 import AWS from "aws-sdk";
+import { serialize } from "../lib/serialize";
 const ddb = new AWS.DynamoDB.DocumentClient({
   region: process.env.TARGET_REGION,
 });
@@ -23,7 +24,7 @@ exports.lambdaHandler = async (event:any, context:any) => {
     let data = await readMessage();
     let response = {
       statusCode: 200,
-      body: JSON.stringify(data.Items, null, 2),
+      body: serialize(data.Items),
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
