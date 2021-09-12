@@ -1,4 +1,4 @@
-const AWS = require("aws-sdk");
+import AWS from "aws-sdk";
 const ddb = new AWS.DynamoDB.DocumentClient({
   region: process.env.TARGET_REGION,
 });
@@ -18,7 +18,7 @@ const ddb = new AWS.DynamoDB.DocumentClient({
  * @returns {Object} object - API Gateway Lambda Proxy Output Format
  *
  */
-exports.lambdaHandler = async (event, context, callback) => {
+exports.lambdaHandler = async (event:any, context:any) => {
   try {
     let data = await readMessage();
     let response = {

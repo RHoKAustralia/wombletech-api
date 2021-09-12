@@ -9,11 +9,11 @@ Currently using AWS region ap-southeast-2
 Create one dynamodb tables (expect this to change)
 1. wombletech_donations (donationId)
 
-# instuctions
-- sam build
-- aws-vault exec <profile> -- sam deploy 
+# instuctions (build and deploy)
+1. yarn build
+2. aws-vault exec <profile> -- sam deploy 
 
-# local testing
+# local testing (build and deploy)
 1. aws-vault exec <profile> -- sam local start-api --enn-vars env.json
 
 # security

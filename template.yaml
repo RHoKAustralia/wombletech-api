@@ -9,14 +9,14 @@ Description: >
 Globals:
   Function:
     Timeout: 3
+    Runtime: nodejs14.x
 
 Resources:
   ListDonationsFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: src/donation/list/
       Handler: app.lambdaHandler
-      Runtime: nodejs14.x
+      CodeUri: dist/donation_list
       Environment:
         Variables:
           TARGET_REGION: !Sub '${AWS::Region}'
@@ -24,16 +24,15 @@ Resources:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /donation/list
+            Path: /donation_list
             Method: get
       Role: !GetAtt WombletechRHoKFunctionRole.Arn
 
   ListItemsFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: src/item/list/
       Handler: app.lambdaHandler
-      Runtime: nodejs14.x
+      CodeUri: dist/item_list
       Environment:
         Variables:
           TARGET_REGION: !Sub '${AWS::Region}'
@@ -41,7 +40,7 @@ Resources:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /item/list
+            Path: /item_list
             Method: get
       Role: !GetAtt WombletechRHoKFunctionRole.Arn
 
