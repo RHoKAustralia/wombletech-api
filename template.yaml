@@ -11,6 +11,15 @@ Globals:
     Timeout: 3
     Runtime: nodejs14.x
 
+Parameters:
+  Env:
+    Description: Deployment environment
+    Default: test
+    Type: String
+    AllowedValues:
+      - prod
+      - test
+
 Resources:
   ListDonationsFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -21,11 +30,12 @@ Resources:
         Variables:
           TARGET_REGION: !Sub '${AWS::Region}'
       Events:
-        HelloWorld:
+        Api:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /donation_list
+            Path: /donation
             Method: get
+            RestApiId: !Ref RestApi
       Role: !GetAtt WombletechRHoKFunctionRole.Arn
 
   SubmitDonationFunction:
@@ -37,11 +47,12 @@ Resources:
         Variables:
           TARGET_REGION: !Sub '${AWS::Region}'
       Events:
-        HelloWorld:
+        Api:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /donation_submit
+            Path: /donation
             Method: post
+            RestApiId: !Ref RestApi
       Role: !GetAtt WombletechRHoKFunctionRole.Arn
 
   UpdateDonationFunction:
@@ -53,11 +64,12 @@ Resources:
         Variables:
           TARGET_REGION: !Sub '${AWS::Region}'
       Events:
-        HelloWorld:
+        Api:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /donation_update
-            Method: post
+            Path: /donation
+            Method: put
+            RestApiId: !Ref RestApi
       Role: !GetAtt WombletechRHoKFunctionRole.Arn
 
   WombletechRHoKFunctionRole:
@@ -90,16 +102,22 @@ Resources:
                   - dynamodb:*
                 Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:*:table/wombletech*'
 
+  RestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref Env
+      Cors:
+        AllowMethods: "'GET,POST,PUT,OPTIONS'"
+        AllowHeaders: "'Content-Type'"
+        AllowOrigin: "'*'"
+
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  WombletechRHoKDonationsApi:
-    Description: "API Gateway endpoint URL for Prod stage listing donations"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/donation/list"
-  WombletechRHoKItemsApi:
-    Description: "API Gateway endpoint URL for Prod stage listing donated items"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/item/list"
+  WombletechRHoKDonationApi:
+    Description: "API Gateway endpoint URL for Prod stage managing donations"
+    Value: !Sub "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/${Env}/donation"
   ListDonationsFunction:
     Description: "Lambda Function To list donations"
     Value: !GetAtt ListDonationsFunction.Arn
