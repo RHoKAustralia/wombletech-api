@@ -4,7 +4,9 @@ import {
   Context,
 } from "aws-lambda";
 import AWS from "aws-sdk";
-import { serialize } from "../lib/serialize";
+import { Donation } from "../../lib/donation";
+import { serialize } from "../../lib/serialize";
+
 const ddb = new AWS.DynamoDB.DocumentClient({
   region: process.env.TARGET_REGION,
 });
@@ -29,10 +31,27 @@ exports.lambdaHandler = async (
   context: Context
 ): Promise<APIGatewayProxyResult> => {
   try {
-    let data = await readMessage();
+    console.log(`body: ${event.body}`);
+    const donation: Donation = JSON.parse(event.body ?? "{}");
+    if (!donation.donationId) {
+      throw new Error(`Invalid donationIdentifer suppliedx`);
+    }
+
+    const params = {
+      TableName: "wombletech_donations",
+      Key: { donationId: donation.donationId ?? "" },
+      UpdateExpression: "set email = :email",
+      ExpressionAttributeValues: {
+        ":email": donation.email
+      },
+      ReturnValues: "UPDATED_NEW",
+    };
+
+    await ddb.update(params).promise();
+
     let response = {
       statusCode: 200,
-      body: serialize(data.Items),
+      body: "",
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
@@ -43,15 +62,11 @@ exports.lambdaHandler = async (
     console.log(err);
     return {
       statusCode: 500,
-      body: "Go look at the logs...",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+      },
+      body: serialize({ message: "Go look at the logs..." }),
     };
   }
 };
-
-function readMessage() {
-  const params = {
-    TableName: "wombletech_donations",
-    Limit: 10,
-  };
-  return ddb.scan(params).promise();
-}

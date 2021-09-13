@@ -1,20 +1,28 @@
 import { resolve } from 'path';
 import { Configuration } from 'webpack';
-const { readdirSync } = require('fs')
+const glob = require('glob');
 
 const isProduction = process.env.NODE_ENV === 'production';
 const mode = isProduction ? 'production' : 'development';
 console.info(`Build type: ${mode}`);
 
-const getSourceDirectories = () => readdirSync('./src', { withFileTypes: true })
-  .filter((entry: any) => entry.isDirectory && entry.name !== 'lib')
-  .map((entry: any) => entry.name);
+type LambdaFolder = {
+  path: string;
+  name: string;
+}
+
+const expr = /\.\/src\/(.+)\/app.ts$/;
+const paths: LambdaFolder[] = glob.sync('./src/**/app.ts')
+  .map((path: string) => path.match(expr))
+  .map((match: any) => ({ path: match[0], name: match[1] }));
+
+console.log(paths);  
 
 const config: Configuration = {
   mode: mode,
   devtool: isProduction ? false : 'eval-cheap-module-source-map',
-  entry: getSourceDirectories().reduce((acc: any, dirName: any) => {
-    acc[dirName] = `./src/${dirName}/app.ts`;
+  entry: paths.reduce((acc: any, lambda) => {
+    acc[lambda.name] = lambda.path;
     return acc;
   }, {}),
   externals: isProduction ? ['aws-sdk'] : [],

@@ -25,7 +25,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       Handler: app.lambdaHandler
-      CodeUri: dist/donation_list
+      CodeUri: dist/donation/get
       Environment:
         Variables:
           TARGET_REGION: !Sub '${AWS::Region}'
@@ -42,7 +42,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       Handler: app.lambdaHandler
-      CodeUri: dist/donation_submit
+      CodeUri: dist/donation/post
       Environment:
         Variables:
           TARGET_REGION: !Sub '${AWS::Region}'
@@ -59,7 +59,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       Handler: app.lambdaHandler
-      CodeUri: dist/donation_update
+      CodeUri: dist/donation/put
       Environment:
         Variables:
           TARGET_REGION: !Sub '${AWS::Region}'

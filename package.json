@@ -13,6 +13,7 @@
     "@types/node": "^16.9.1",
     "@types/webpack": "^5.28.0",
     "aws-sdk": "^2.987.0",
+    "glob": "^7.1.7",
     "prettier": "^2.4.0",
     "ts-loader": "^9.2.5",
     "ts-node": "^10.2.1",
