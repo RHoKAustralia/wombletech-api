@@ -1,7 +1,12 @@
 {
+  "name": "wombletech-api",
+  "description": "Lambda hosted API created for Wombletech as part of RHoK'n'RHoL 2021",
+  "private": true,
   "scripts": {
     "lint-fix": "npx prettier --write src/**/*.ts",
-    "build": "webpack"
+    "build": "NODE_ENV=development webpack",
+    "build-prd": "NODE_ENV=production webpack",
+    "deploy": "yarn build-prd && sam deploy"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.83",
