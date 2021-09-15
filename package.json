@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "lint-fix": "npx prettier --write src/**/*.ts",
-    "build": "NODE_ENV=development webpack",
-    "build-prd": "NODE_ENV=production webpack",
+    "clean" : "rm -rf ./dist",
+    "build": "yarn clean && NODE_ENV=development webpack",
+    "build-prd": "yarn clean && NODE_ENV=production webpack",
     "deploy": "yarn build-prd && sam deploy"
   },
   "devDependencies": {

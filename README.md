@@ -15,7 +15,13 @@ None as yet - this is a todo
 # Developer flow
 ## local testing (build and local testing)
 1. `yarn build`
-1. `aws-vault exec <profile> -- sam local start-api --env-vars env.json`
+2. `aws-vault exec <profile> -- sam local start-api --env-vars env.json`
+
+# debugging
+1. `yarn build`
+2. `aws-vault exec <profile> -- sam local start-api --env-vars env.json -d 5858`
+3. Trigger lambda ie use something like postman if function handles web requests
+4. In VSCode - use `Attach to SAM CLI` option (details in `launch.json`)
 
 ## instructions (deploy)
 1. `aws-vault exec <profile> -- yarn deploy`

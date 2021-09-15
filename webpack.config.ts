@@ -20,7 +20,7 @@ console.log(paths);
 
 const config: Configuration = {
   mode: mode,
-  devtool: isProduction ? false : 'eval-cheap-module-source-map',
+  devtool: isProduction ? false : 'eval-source-map',
   entry: paths.reduce((acc: any, lambda) => {
     acc[lambda.name] = lambda.path;
     return acc;
@@ -30,10 +30,14 @@ const config: Configuration = {
     filename: '[name]/app.js',
     libraryTarget: 'commonjs2',
     path: resolve(__dirname, 'dist'),
+    devtoolModuleFilenameTemplate: '[absolute-resource-path]',
   },
-  // more
   module: {
-    rules: [{ test: /\.ts$/, loader: 'ts-loader' }],
+    rules: [{ 
+      test: /\.ts$/, 
+      loader: 'ts-loader',
+      exclude: /node_modules/
+    }],
   },
   resolve: {
     extensions: ['.js', '.ts'],
