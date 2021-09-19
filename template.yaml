@@ -3,7 +3,7 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   WombletechRHoK
 
-  Sample SAM Template for WombletechRHoK
+  SAM Template for WombletechRHoK stack
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -19,6 +19,9 @@ Parameters:
     AllowedValues:
       - prod
       - test
+  CognitoSlug:
+    Description: The final part of the Cognito ARN (get from AWS console)
+    Type: String
 
 Resources:
   ListDonationsFunction:
@@ -36,6 +39,10 @@ Resources:
             Path: /donation
             Method: get
             RestApiId: !Ref RestApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+              AuthorizationScopes:
+                - admin-ui/admin
       Role: !GetAtt WombletechRHoKFunctionRole.Arn
 
   SubmitDonationFunction:
@@ -53,6 +60,8 @@ Resources:
             Path: /donation
             Method: post
             RestApiId: !Ref RestApi
+            Auth:
+              Authorizer: 'NONE'
       Role: !GetAtt WombletechRHoKFunctionRole.Arn
 
   UpdateDonationFunction:
@@ -70,6 +79,10 @@ Resources:
             Path: /donation
             Method: put
             RestApiId: !Ref RestApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+              AuthorizationScopes:
+                - admin-ui/admin
       Role: !GetAtt WombletechRHoKFunctionRole.Arn
 
   WombletechRHoKFunctionRole:
@@ -103,13 +116,23 @@ Resources:
                 Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:*:table/wombletech*'
 
   RestApi:
-    Type: AWS::Serverless::Api
+    Type: AWS::Serverless::Api # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-api.html
     Properties:
       StageName: !Ref Env
       Cors:
         AllowMethods: "'GET,POST,PUT,OPTIONS'"
         AllowHeaders: "'Content-Type'"
         AllowOrigin: "'*'"
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        AddDefaultAuthorizerToCorsPreflight: false # < ignore template schema validation error - this is correct
+        Authorizers:
+          CognitoAuthorizer:
+            AuthType: "COGNITO_USER_POOLS"
+            UserPoolArn: 
+              - !Sub 'arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${AWS::Region}_${CognitoSlug}' 
+            Identity:
+              Header: 'Authorization'
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
