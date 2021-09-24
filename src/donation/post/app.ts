@@ -5,15 +5,13 @@ import {
 } from "aws-lambda";
 import AWS from "aws-sdk";
 import { Donation } from "../../lib/donation";
-import { serialize } from "../../lib/serialize";
 const { v4: uuidv4 } = require("uuid");
+import { createResponseBody } from "../../lib/response";
+import { validateDonation } from "../../lib/validate";
 
 const ddb = new AWS.DynamoDB.DocumentClient({
   region: process.env.TARGET_REGION,
 });
-
-// const axios = require('axios')
-// const url = 'http://checkip.amazonaws.com/';
 
 /**
  *
@@ -34,7 +32,12 @@ exports.lambdaHandler = async (
   try {
     console.log(`body: ${event.body}`);
     const donation: Donation = JSON.parse(event.body ?? "{}");
-    donation.donationId ??= uuidv4().toString();
+    const { valid, errors } = validateDonation(donation);
+    if (!valid) {
+      return createResponseBody(400, { message: errors });
+    }
+    
+    donation.donationId = uuidv4().toString();
 
     const params = {
       TableName: "wombletech_donations",
@@ -43,24 +46,10 @@ exports.lambdaHandler = async (
 
     await ddb.put(params).promise();
 
-    let response = {
-      statusCode: 200,
-      body: "",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-    };
+    let response = createResponseBody(200, donation);
     return response;
   } catch (err) {
     console.log(err);
-    return {
-      statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: serialize({ message: "Go look at the logs..." }),
-    };
+    return createResponseBody(500,{ message: "Go look at the logs..." });
   }
 };
