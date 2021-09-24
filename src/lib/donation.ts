@@ -10,7 +10,22 @@ export interface Donation {
   description: string;
 }
 
+export const IdentityRequiredPatch = {
+  $id: "identity-required-patch#",
+  $patch: {
+    source: { $ref: "donation.json#" },
+    with: [
+      {
+        op: "add",
+        path: "/required/-",
+        value: "donationId",
+      },
+    ],
+  },
+};
+
 export const DonationSchema: JSONSchemaType<Donation> = {
+  $id: "donation.json#",
   type: "object",
   properties: {
     donationId: { type: "string", nullable: true, format: "uuid" },
@@ -22,6 +37,14 @@ export const DonationSchema: JSONSchemaType<Donation> = {
     donationType: { type: "string" },
     description: { type: "string" },
   },
-  required: ["name", "email", "donationType", "description"],
+  required: [
+    "name",
+    "email",
+    "phoneNumber",
+    "suburb",
+    "region",
+    "donationType",
+    "description",
+  ],
   additionalProperties: false,
 };

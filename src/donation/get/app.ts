@@ -4,13 +4,10 @@ import {
   Context,
 } from "aws-lambda";
 import AWS from "aws-sdk";
-import { serialize } from "../../lib/serialize";
+import { createResponseBody } from "../../lib/response";
 const ddb = new AWS.DynamoDB.DocumentClient({
   region: process.env.TARGET_REGION,
 });
-
-// const axios = require('axios')
-// const url = 'http://checkip.amazonaws.com/';
 
 /**
  *
@@ -29,26 +26,17 @@ exports.lambdaHandler = async (
   context: Context
 ): Promise<APIGatewayProxyResult> => {
   try {
-    let data = await readMessage();
-    let response = {
-      statusCode: 200,
-      body: serialize(data.Items),
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-    };
+    let data = await readDonations();
+    let response = createResponseBody(200, data.Items ?? []);
+
     return response;
   } catch (err) {
     console.log(err);
-    return {
-      statusCode: 500,
-      body: "Go look at the logs...",
-    };
+    return createResponseBody(500,{ message: "Go look at the logs..." });
   }
 };
 
-function readMessage() {
+function readDonations() {
   const params = {
     TableName: "wombletech_donations",
     Limit: 10,
