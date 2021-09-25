@@ -36,7 +36,7 @@ exports.lambdaHandler = async (
       return createResponseBody(400, { message: errors });
     }
 
-    const {donationId, ...attributes} = {...donation};
+    const {donationId, submitDate, ...attributes} = {...donation};
     const map = new Map(Object.entries(attributes));
     const keys = Object.keys(attributes);
 
@@ -51,7 +51,7 @@ exports.lambdaHandler = async (
 
     await ddb.update(params).promise();
 
-    let response = createResponseBody(200, donation);
+    let response = createResponseBody(200, {donationId, ...attributes});
     return response;
   } catch (err) {
     console.log(err);

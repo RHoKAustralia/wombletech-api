@@ -1,4 +1,10 @@
 import { JSONSchemaType } from "ajv";
+
+export interface DonationQueryCursor {
+  donationId?: string;
+  submitDate?: string;
+}
+
 export interface Donation {
   donationId?: string;
   name: string;
@@ -8,6 +14,7 @@ export interface Donation {
   region: string;
   donationType: string;
   description: string;
+  submitDate?: string;
 }
 
 export const IdentityRequiredPatch = {
@@ -36,6 +43,7 @@ export const DonationSchema: JSONSchemaType<Donation> = {
     region: { type: "string" },
     donationType: { type: "string" },
     description: { type: "string" },
+    submitDate: { type: "string", nullable: true, format: "date-time" },
   },
   required: [
     "name",

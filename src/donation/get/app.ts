@@ -4,11 +4,14 @@ import {
   Context,
 } from "aws-lambda";
 import AWS from "aws-sdk";
-import { Donation } from "../../lib/donation";
+import { Donation, DonationQueryCursor } from "../../lib/donation";
+import { RecordType, QueryParams } from "../../lib/types";
 import { createResponseBody } from "../../lib/response";
+import { serialize } from "../../lib/serialize";
 const ddb = new AWS.DynamoDB.DocumentClient({
   region: process.env.TARGET_REGION,
 });
+import { encode, decode } from "../../lib/encoding"
 
 /**
  *
@@ -27,15 +30,21 @@ exports.lambdaHandler = async (
   context: Context
 ): Promise<APIGatewayProxyResult> => {
   try {
-    const data = await readDonations();
+    const query = event.queryStringParameters as QueryParams;
+    const {limit, ascending, cursor} = {...query}
+
+    const startKey = (cursor ? JSON.parse(decode(cursor)) : null) as DonationQueryCursor;
+    const data = await readDonations(limit, ascending, startKey);
 
     const filtered = data.Items?.map(i => {
-      const {recordType, ...remaining} = {...(i as {recordType: string})};
+      const {recordType, ...remaining} = {...(i as RecordType)};
       return remaining as Donation;
     });
 
-    const response = createResponseBody(200, filtered ?? []);
+    const {recordType, ...lastEvaluatedKey} = {...(data.LastEvaluatedKey as RecordType)}
+    const newCursor = data.LastEvaluatedKey ? encode(serialize(lastEvaluatedKey)) : null
 
+    const response = createResponseBody(200, { items: filtered ?? [], cursor: newCursor });
     return response;
   } catch (err) {
     console.log(err);
@@ -43,11 +52,24 @@ exports.lambdaHandler = async (
   }
 };
 
-function readDonations() {
+function readDonations(limit?: number, ascending?: boolean, startKey?: DonationQueryCursor) {
   const params = {
     TableName: "wombletech_donations_type",
-    FilterExpression: "recordType = :recordType",
-    ExpressionAttributeValues: { ":recordType": "header" }
+    IndexName: "recordType-submitDate-index",
+    KeyConditionExpression: "recordType = :recordType",
+    ExpressionAttributeValues: { ":recordType": "header" },
+    ScanIndexForward: ascending ?? false,
+    Limit: Math.min(limit ?? 10, 50)
   };
-  return ddb.scan(params).promise();
+
+  const exclusiveStartKey: any = {};
+  if (startKey?.submitDate && startKey.donationId){
+    exclusiveStartKey.ExclusiveStartKey = { 
+      recordType: "header",
+      submitDate: startKey.submitDate,
+      donationId: startKey.donationId
+    }
+  }
+
+  return ddb.query({...params, ...exclusiveStartKey}).promise();
 }

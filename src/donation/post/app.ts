@@ -38,6 +38,7 @@ exports.lambdaHandler = async (
     }
     
     donation.donationId = uuidv4().toString();
+    donation.submitDate = new Date().toISOString();
 
     const params = {
       TableName: "wombletech_donations_type",
