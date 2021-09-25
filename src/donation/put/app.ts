@@ -29,7 +29,6 @@ exports.lambdaHandler = async (
   context: Context
 ): Promise<APIGatewayProxyResult> => {
   try {
-    console.log(`body: ${event.body}`);
     const donation: Donation = JSON.parse(event.body ?? "{}");
 
     const { valid, errors } = validateDonation(donation, true);
@@ -38,11 +37,20 @@ exports.lambdaHandler = async (
     }
 
     const params = {
-      TableName: "wombletech_donations",
-      Key: { donationId: donation.donationId ?? "" },
-      UpdateExpression: "set email = :email",
+      TableName: "wombletech_donations_type",
+      Key: { donationId: donation.donationId ?? "", recordType: "header" },
+      UpdateExpression: "set #r_n = :r_n, email = :email, phoneNumber = :phoneNumber, donationType = :donationType, description = :description, suburb = :suburb, region = :region",
       ExpressionAttributeValues: {
-        ":email": donation.email
+        ":r_n": donation.name,
+        ":email": donation.email,
+        ":phoneNumber": donation.phoneNumber,
+        ":donationType": donation.donationType,
+        ":description": donation.description,
+        ":suburb": donation.suburb,
+        ":region": donation.region,
+      },
+      ExpressionAttributeName: { 
+        "#r_n": "name"
       },
       ReturnValues: "UPDATED_NEW",
     };

@@ -40,8 +40,8 @@ exports.lambdaHandler = async (
     donation.donationId = uuidv4().toString();
 
     const params = {
-      TableName: "wombletech_donations",
-      Item: donation,
+      TableName: "wombletech_donations_type",
+      Item: {...donation, recordType: "header" },
     };
 
     await ddb.put(params).promise();

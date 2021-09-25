@@ -4,6 +4,7 @@ import {
   Context,
 } from "aws-lambda";
 import AWS from "aws-sdk";
+import { Donation } from "../../lib/donation";
 import { createResponseBody } from "../../lib/response";
 const ddb = new AWS.DynamoDB.DocumentClient({
   region: process.env.TARGET_REGION,
@@ -26,8 +27,14 @@ exports.lambdaHandler = async (
   context: Context
 ): Promise<APIGatewayProxyResult> => {
   try {
-    let data = await readDonations();
-    let response = createResponseBody(200, data.Items ?? []);
+    const data = await readDonations();
+
+    const filtered = data.Items?.map(i => {
+      const {recordType, ...remaining} = {...(i as {recordType: string})};
+      return remaining as Donation;
+    });
+
+    const response = createResponseBody(200, filtered ?? []);
 
     return response;
   } catch (err) {
@@ -38,8 +45,9 @@ exports.lambdaHandler = async (
 
 function readDonations() {
   const params = {
-    TableName: "wombletech_donations",
-    Limit: 10,
+    TableName: "wombletech_donations_type",
+    FilterExpression: "recordType = :recordType",
+    ExpressionAttributeValues: { ":recordType": "header" }
   };
   return ddb.scan(params).promise();
 }
