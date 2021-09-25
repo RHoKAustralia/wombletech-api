@@ -36,22 +36,16 @@ exports.lambdaHandler = async (
       return createResponseBody(400, { message: errors });
     }
 
+    const {donationId, ...attributes} = {...donation};
+    const map = new Map(Object.entries(attributes));
+    const keys = Object.keys(attributes);
+
     const params = {
       TableName: "wombletech_donations_type",
       Key: { donationId: donation.donationId ?? "", recordType: "header" },
-      UpdateExpression: "set #r_n = :r_n, email = :email, phoneNumber = :phoneNumber, donationType = :donationType, description = :description, suburb = :suburb, region = :region",
-      ExpressionAttributeValues: {
-        ":r_n": donation.name,
-        ":email": donation.email,
-        ":phoneNumber": donation.phoneNumber,
-        ":donationType": donation.donationType,
-        ":description": donation.description,
-        ":suburb": donation.suburb,
-        ":region": donation.region,
-      },
-      ExpressionAttributeName: { 
-        "#r_n": "name"
-      },
+      UpdateExpression: `SET ${keys.map((k, idx) => `#k_${idx} = :v_${idx}`).join(', ')}`,
+      ExpressionAttributeValues: keys.reduce((acc, k, idx) => ({ ...acc, [`:v_${idx}`]: map.get(k) }), {}),
+      ExpressionAttributeNames: keys.reduce((acc, k, idx) => ({ ...acc, [`#k_${idx}`]: k }), {}),
       ReturnValues: "UPDATED_NEW",
     };
 
