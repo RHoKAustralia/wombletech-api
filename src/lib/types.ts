@@ -1,4 +1,5 @@
-export interface RecordType {
+export interface PimaryKey {
+  donationId: string;
   recordType: string;
 }
 

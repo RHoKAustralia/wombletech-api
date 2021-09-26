@@ -5,7 +5,7 @@ import {
 } from "aws-lambda";
 import AWS from "aws-sdk";
 import { Donation, DonationQueryCursor } from "../../lib/donation";
-import { RecordType, QueryParams } from "../../lib/types";
+import { PimaryKey, QueryParams } from "../../lib/types";
 import { createResponseBody } from "../../lib/response";
 import { serialize } from "../../lib/serialize";
 const ddb = new AWS.DynamoDB.DocumentClient({
@@ -37,11 +37,11 @@ exports.lambdaHandler = async (
     const data = await readDonations(limit, ascending, startKey);
 
     const filtered = data.Items?.map(i => {
-      const {recordType, ...remaining} = {...(i as RecordType)};
+      const {recordType, ...remaining} = {...(i as PimaryKey)};
       return remaining as Donation;
     });
 
-    const {recordType, ...lastEvaluatedKey} = {...(data.LastEvaluatedKey as RecordType)}
+    const {recordType, ...lastEvaluatedKey} = {...(data.LastEvaluatedKey as PimaryKey)}
     const newCursor = data.LastEvaluatedKey ? encode(serialize(lastEvaluatedKey)) : null
 
     const response = createResponseBody(200, { items: filtered ?? [], cursor: newCursor });
