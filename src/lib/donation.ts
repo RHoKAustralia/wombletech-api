@@ -17,7 +17,7 @@ export interface Donation {
   submitDate?: string;
 }
 
-export const IdentityRequiredPatch = {
+export const DonationIdentityRequiredPatch = {
   $id: "identity-required-patch#",
   $patch: {
     source: { $ref: "donation.json#" },

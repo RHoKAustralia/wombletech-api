@@ -7,7 +7,7 @@ import AWS from "aws-sdk";
 import { Donation } from "../../lib/donation";
 const { v4: uuidv4 } = require("uuid");
 import { createResponseBody } from "../../lib/response";
-import { validateDonation } from "../../lib/validate";
+import { validateDonation } from "../../lib/validateDonation";
 
 const ddb = new AWS.DynamoDB.DocumentClient({
   region: process.env.TARGET_REGION,
@@ -30,7 +30,6 @@ exports.lambdaHandler = async (
   context: Context
 ): Promise<APIGatewayProxyResult> => {
   try {
-    console.log(`body: ${event.body}`);
     const donation: Donation = JSON.parse(event.body ?? "{}");
     const { valid, errors } = validateDonation(donation);
     if (!valid) {

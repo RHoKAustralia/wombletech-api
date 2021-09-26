@@ -6,7 +6,7 @@ import {
 import AWS from "aws-sdk";
 import { Donation } from "../../lib/donation";
 import { createResponseBody } from "../../lib/response";
-import { validateDonation } from "../../lib/validate";
+import { validateDonation } from "../../lib/validateDonation";
 
 const ddb = new AWS.DynamoDB.DocumentClient({
   region: process.env.TARGET_REGION,

@@ -1,13 +1,17 @@
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import { Donation, DonationSchema, IdentityRequiredPatch } from "./donation";
+import {
+  Donation,
+  DonationSchema,
+  DonationIdentityRequiredPatch,
+} from "./donation";
 
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
 require("ajv-merge-patch")(ajv);
 const validateWithRequiredIdentity = ajv
   .addSchema(DonationSchema)
-  .compile(IdentityRequiredPatch);
+  .compile(DonationIdentityRequiredPatch);
 const validateWithoutRequiredIdentity = ajv.compile(DonationSchema);
 
 export const validateDonation = (
