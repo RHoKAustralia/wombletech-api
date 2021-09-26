@@ -30,6 +30,55 @@ None as yet - this is a todo
 1. `aws cloudformation delete-stack --stack-name <Stack-Name>`
 2. non-Prod: remove the dynamodb tables
 
+# APIs
+
+## donation
+
+`path: /donation/`
+
+The initial submitted donation, supports GET(list), POST(create), PUT(update)
+### schema
+
+```json
+{
+    donationId?: string, // UUID, optional only for POST requests
+    name: string,
+    email: string,
+    phoneNumber: string,
+    suburb: string,
+    region: string,
+    donationType: string,
+    description: string,
+    submitDate?: string, // UTC-Datetime, read-only
+}
+```
+
+### GET (list)
+Supports paging using a cursor (see DynamoDB and ExclusiveStartKey)
+
+```json
+{
+    items: [],
+    cursor: string // pass this to the next GET via querystring to support paging ie ?cursor=...
+}
+```
+
+## item
+
+`path: /donation/{id}/item`
+
+The items that make up a donation, supports GET(list), POST(create), PUT(update)
+
+### schema 
+
+```json
+{
+    itemId: string, // UUID, optional only for POST requests
+    description: string
+}
+```
+
+
 # Useful information from original SAM guidance
 ## Add a resource to your application
 The application template uses AWS Serverless Application Model (AWS SAM) to define application resources. AWS SAM is an extension of AWS CloudFormation with a simpler syntax for configuring common serverless application resources such as functions, triggers, and APIs. For resources not included in [the SAM specification](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md), you can use standard [AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html) resource types.

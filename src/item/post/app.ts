@@ -5,13 +5,9 @@ import {
 } from "aws-lambda";
 import { createResponseBody } from "../../lib/response";
 import { validateItem } from "../../lib/validateItem";
-const { v4: uuidv4 } = require("uuid");
 import { Item } from "../../lib/item";
-import AWS from "aws-sdk";
+import { donationExists, insertDonatedItem } from "../../lib/database";
 
-const ddb = new AWS.DynamoDB.DocumentClient({
-  region: process.env.TARGET_REGION,
-});
 
 exports.lambdaHandler = async (
   event: APIGatewayProxyEvent,
@@ -27,19 +23,13 @@ exports.lambdaHandler = async (
       return createResponseBody(400, { message: errors });
     }
 
-    const exists = await headerExists(item.donationId);
+    const exists = await donationExists(item.donationId);
     if (!exists) {
       let response = createResponseBody(400, {message: "Header record does not exist"});
       return response;
     }
 
-    item.itemId = uuidv4().toString();
-
-    const params = {
-      TableName: "wombletech_donations_type",
-      Item: {...item, recordType: `item_${item.itemId}`},
-    };
-    await ddb.put(params).promise();
+    await insertDonatedItem(item);
 
     const {donationId, ...attributes} = item;
     let response = createResponseBody(200, attributes);
@@ -49,16 +39,3 @@ exports.lambdaHandler = async (
     return createResponseBody(500,{ message: "Go look at the logs..." });
   }
 };
-
-const headerExists = async (donationId: string) => {
-  const getParams = {
-    TableName: "wombletech_donations_type",
-    Key: { 
-      donationId: donationId,
-      recordType: "header"
-    }, 
-  };
-
-  const header = await ddb.get(getParams).promise();
-  return Object.keys(header).length > 0;
-}

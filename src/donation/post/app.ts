@@ -3,15 +3,10 @@ import {
   APIGatewayProxyResult,
   Context,
 } from "aws-lambda";
-import AWS from "aws-sdk";
+import { insertDonation } from "../../lib/database";
 import { Donation } from "../../lib/donation";
-const { v4: uuidv4 } = require("uuid");
 import { createResponseBody } from "../../lib/response";
 import { validateDonation } from "../../lib/validateDonation";
-
-const ddb = new AWS.DynamoDB.DocumentClient({
-  region: process.env.TARGET_REGION,
-});
 
 /**
  *
@@ -36,17 +31,9 @@ exports.lambdaHandler = async (
       return createResponseBody(400, { message: errors });
     }
     
-    donation.donationId = uuidv4().toString();
-    donation.submitDate = new Date().toISOString();
+    await insertDonation(donation);
 
-    const params = {
-      TableName: "wombletech_donations_type",
-      Item: {...donation, recordType: "header" },
-    };
-
-    await ddb.put(params).promise();
-
-    let response = createResponseBody(200, donation);
+    const response = createResponseBody(200, donation);
     return response;
   } catch (err) {
     console.log(err);

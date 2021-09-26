@@ -6,11 +6,7 @@ import {
 import { Item } from "../../lib/item";
 import { createResponseBody } from "../../lib/response";
 import { validateItem } from "../../lib/validateItem";
-import AWS from "aws-sdk";
-
-const ddb = new AWS.DynamoDB.DocumentClient({
-  region: process.env.TARGET_REGION,
-});
+import { updateDonatedItem } from "../../lib/database";
 
 exports.lambdaHandler = async (
   event: APIGatewayProxyEvent,
@@ -26,21 +22,9 @@ exports.lambdaHandler = async (
       return createResponseBody(400, { message: errors });
     }
 
+    await updateDonatedItem(item);
+
     const {donationId, ...attributes} = {...item};
-    const map = new Map(Object.entries(attributes));
-    const keys = Object.keys(attributes);
-
-    const params = {
-      TableName: "wombletech_donations_type",
-      Key: { donationId: item.donationId ?? "", recordType: `item_${item.itemId}` },
-      UpdateExpression: `SET ${keys.map((k, idx) => `#k_${idx} = :v_${idx}`).join(', ')}`,
-      ExpressionAttributeValues: keys.reduce((acc, k, idx) => ({ ...acc, [`:v_${idx}`]: map.get(k) }), {}),
-      ExpressionAttributeNames: keys.reduce((acc, k, idx) => ({ ...acc, [`#k_${idx}`]: k }), {}),
-      ReturnValues: "UPDATED_NEW",
-    };
-
-    await ddb.update(params).promise();
-
     let response = createResponseBody(200, attributes);
     return response;
   } catch (err) {
