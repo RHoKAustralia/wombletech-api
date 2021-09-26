@@ -126,7 +126,28 @@ Resources:
               AuthorizationScopes:
                 - admin-ui/admin
       Role: !GetAtt WombletechRHoKFunctionRole.Arn
-    
+
+  UpdateDonatedItemFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      Handler: app.lambdaHandler
+      CodeUri: dist/item/put
+      Environment:
+        Variables:
+          TARGET_REGION: !Sub '${AWS::Region}'
+      Events:
+        Api:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /donation/{id}/item
+            Method: put
+            RestApiId: !Ref RestApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+              AuthorizationScopes:
+                - admin-ui/admin
+      Role: !GetAtt WombletechRHoKFunctionRole.Arn
+
   WombletechRHoKFunctionRole:
     Type: AWS::IAM::Role
     Properties:
