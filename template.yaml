@@ -22,8 +22,38 @@ Parameters:
   CognitoSlug:
     Description: The final part of the Cognito ARN (get from AWS console)
     Type: String
+  EmailBucketName:
+    Type: String
+    Default: wombletech-rhok-email-incoming
 
 Resources:
+  IncomingEmailBucketName:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Ref EmailBucketName
+
+  IncomingEmailBucketPolicy:    
+    Type: AWS::S3::BucketPolicy
+    Properties: 
+      Bucket: !Ref EmailBucketName
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 's3:PutObject'
+            Effect: Allow
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref EmailBucketName
+                - /*
+            Principal:
+              Service: ses.amazonaws.com
+            Condition:
+              StringLike:
+                'aws:Referer':
+                  - !Sub "${AWS::AccountId}"
+
   ListDonationsFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -85,7 +115,7 @@ Resources:
                 - admin-ui/admin
       Role: !GetAtt WombletechRHoKFunctionRole.Arn
 
-  ListDonatedItemFunction:
+  ListDonatedItemsFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       Handler: app.lambdaHandler
@@ -213,6 +243,15 @@ Outputs:
   UpdateDonationFunction:
     Description: "Lambda Function To update donations"
     Value: !GetAtt UpdateDonationFunction.Arn
+  ListDonatedItemsFunction:
+    Description: "Lambda Function To list donation items"
+    Value: !GetAtt ListDonatedItemsFunction.Arn
+  SubmitDonatedItemFunction:
+    Description: "Lambda Function To submit a donated item"
+    Value: !GetAtt SubmitDonatedItemFunction.Arn
+  UpdateDonatedItemFunction:
+    Description: "Lambda Function To update a donated item"
+    Value: !GetAtt UpdateDonatedItemFunction.Arn
   WombletechRHoKFunctionRole:
     Description: "IAM Role created for Lambdas"
     Value: !GetAtt WombletechRHoKFunctionRole.Arn

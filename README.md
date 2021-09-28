@@ -10,7 +10,17 @@ Create one dynamodb tables (expect this to change)
 1. wombletech_donations (donationId)
 
 ## security
-None as yet - this is a todo
+
+Using AWS Cognito
+
+## Email handling
+
+Using AWS SES
+- you'll need access to your DNS to enter records from the current region (sending) and us-east-1 (receiving)
+
+NOTE: 
+- incoming email support is only suppported in a few regions e.g. us-east-1
+- to avoid messing with current MX configuration use a subdomain to send emails to and from eg mailer.<yourdomain.com> 
 
 # Developer flow
 ## local testing (build and local testing)
