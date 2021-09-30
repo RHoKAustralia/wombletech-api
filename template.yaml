@@ -58,7 +58,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       Handler: app.lambdaHandler
-      CodeUri: dist/donation/get
+      CodeUri: dist/api/donation/get
       Environment:
         Variables:
           TARGET_REGION: !Sub '${AWS::Region}'
@@ -79,7 +79,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       Handler: app.lambdaHandler
-      CodeUri: dist/donation/post
+      CodeUri: dist/api/donation/post
       Environment:
         Variables:
           TARGET_REGION: !Sub '${AWS::Region}'
@@ -98,7 +98,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       Handler: app.lambdaHandler
-      CodeUri: dist/donation/put
+      CodeUri: dist/api/donation/put
       Environment:
         Variables:
           TARGET_REGION: !Sub '${AWS::Region}'
@@ -119,7 +119,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       Handler: app.lambdaHandler
-      CodeUri: dist/item/get
+      CodeUri: dist/api/item/get
       Environment:
         Variables:
           TARGET_REGION: !Sub '${AWS::Region}'
@@ -140,7 +140,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       Handler: app.lambdaHandler
-      CodeUri: dist/item/post
+      CodeUri: dist/api/item/post
       Environment:
         Variables:
           TARGET_REGION: !Sub '${AWS::Region}'
@@ -161,7 +161,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       Handler: app.lambdaHandler
-      CodeUri: dist/item/put
+      CodeUri: dist/api/item/put
       Environment:
         Variables:
           TARGET_REGION: !Sub '${AWS::Region}'

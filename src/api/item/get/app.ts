@@ -4,7 +4,7 @@ import {
   Context,
 } from "aws-lambda";
 import { createResponseBody } from "../../lib/response";
-import { readDonatedItems } from "../../lib/database";
+import { readDonatedItems } from "../../../lib/database/items";
 
 exports.lambdaHandler = async (
   event: APIGatewayProxyEvent,

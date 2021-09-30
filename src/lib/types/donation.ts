@@ -6,7 +6,7 @@ export interface DonationQueryCursor {
 }
 
 export interface Donation {
-  donationId?: string;
+  donationId: string;
   name: string;
   email: string;
   phoneNumber: string;
@@ -17,25 +17,11 @@ export interface Donation {
   submitDate?: string;
 }
 
-export const DonationIdentityRequiredPatch = {
-  $id: "identity-required-patch#",
-  $patch: {
-    source: { $ref: "donation.json#" },
-    with: [
-      {
-        op: "add",
-        path: "/required/-",
-        value: "donationId",
-      },
-    ],
-  },
-};
-
 export const DonationSchema: JSONSchemaType<Donation> = {
   $id: "donation.json#",
   type: "object",
   properties: {
-    donationId: { type: "string", nullable: true, format: "uuid" },
+    donationId: { type: "string", format: "uuid" },
     name: { type: "string" },
     email: { type: "string", format: "email" },
     phoneNumber: { type: "string" },
@@ -46,6 +32,7 @@ export const DonationSchema: JSONSchemaType<Donation> = {
     submitDate: { type: "string", nullable: true, format: "date-time" },
   },
   required: [
+    "donationId",
     "name",
     "email",
     "phoneNumber",

@@ -3,10 +3,11 @@ import {
   APIGatewayProxyResult,
   Context,
 } from "aws-lambda";
-import { updateDonation } from "../../lib/database";
-import { Donation } from "../../lib/donation";
+import { insertDonation } from "../../../lib/database/donations";
+import { Donation } from "../../../lib/types/donation";
 import { createResponseBody } from "../../lib/response";
-import { validateDonation } from "../../lib/validateDonation";
+import { validateDonation } from "../../lib/validate";
+const { v4: uuidv4 } = require("uuid");
 
 /**
  *
@@ -26,13 +27,14 @@ exports.lambdaHandler = async (
 ): Promise<APIGatewayProxyResult> => {
   try {
     const donation: Donation = JSON.parse(event.body ?? "{}");
+    donation.donationId = uuidv4().toString();
 
-    const { valid, errors } = validateDonation(donation, true);
+    const { valid, errors } = validateDonation(donation);
     if (!valid) {
       return createResponseBody(400, { message: errors });
     }
-
-    await updateDonation(donation);
+    
+    await insertDonation(donation);
 
     const response = createResponseBody(200, donation);
     return response;

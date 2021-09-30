@@ -1,5 +1,5 @@
 import { APIGatewayProxyResult } from "aws-lambda";
-import { serialize } from "./serialize";
+import { serialize } from "../../lib/serialize";
 
 export const createResponseBody = (
   httpCode: number,

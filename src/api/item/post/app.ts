@@ -3,10 +3,13 @@ import {
   APIGatewayProxyResult,
   Context,
 } from "aws-lambda";
-import { Item } from "../../lib/item";
 import { createResponseBody } from "../../lib/response";
-import { validateItem } from "../../lib/validateItem";
-import { updateDonatedItem } from "../../lib/database";
+import { validateItem } from "../../lib/validate";
+import { Item } from "../../../lib/types/item";
+import { donationExists } from "../../../lib/database/donations";
+import { insertDonatedItem } from "../../../lib/database/items";
+const { v4: uuidv4 } = require("uuid");
+
 
 exports.lambdaHandler = async (
   event: APIGatewayProxyEvent,
@@ -14,17 +17,25 @@ exports.lambdaHandler = async (
 ): Promise<APIGatewayProxyResult> => {
   try {
     const { id } = event.pathParameters as { id: string };
+
     const item: Item = JSON.parse(event.body ?? "{}");
+    item.itemId = uuidv4().toString();
     item.donationId = id;
 
-    const { valid, errors } = validateItem(item, true);
+    const { valid, errors } = validateItem(item);
     if (!valid) {
       return createResponseBody(400, { message: errors });
     }
 
-    await updateDonatedItem(item);
+    const exists = await donationExists(item.donationId);
+    if (!exists) {
+      let response = createResponseBody(400, {message: "Header record does not exist"});
+      return response;
+    }
 
-    const {donationId, ...attributes} = {...item};
+    await insertDonatedItem(item);
+
+    const {donationId, ...attributes} = item;
     let response = createResponseBody(200, attributes);
     return response;
   } catch (err) {

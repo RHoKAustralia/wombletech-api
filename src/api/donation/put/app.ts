@@ -3,11 +3,10 @@ import {
   APIGatewayProxyResult,
   Context,
 } from "aws-lambda";
-import { DonationQueryCursor } from "../../lib/donation";
-import { QueryParams } from "../../lib/types";
+import { updateDonation } from "../../../lib/database/donations";
+import { Donation } from "../../../lib/types/donation";
 import { createResponseBody } from "../../lib/response";
-import { decode } from "../../lib/encoding";
-import { readDonations } from "../../lib/database";
+import { validateDonation } from "../../lib/validate";
 
 /**
  *
@@ -26,13 +25,16 @@ exports.lambdaHandler = async (
   context: Context
 ): Promise<APIGatewayProxyResult> => {
   try {
-    const query = event.queryStringParameters as QueryParams;
-    const {limit, ascending, cursor} = {...query}
+    const donation: Donation = JSON.parse(event.body ?? "{}");
 
-    const startKey = (cursor ? JSON.parse(decode(cursor)) : null) as DonationQueryCursor;
-    const { donations, newCursor } = await readDonations(limit, ascending, startKey);
+    const { valid, errors } = validateDonation(donation);
+    if (!valid) {
+      return createResponseBody(400, { message: errors });
+    }
 
-    const response = createResponseBody(200, { items: donations ?? [], cursor: newCursor });
+    await updateDonation(donation);
+
+    const response = createResponseBody(200, donation);
     return response;
   } catch (err) {
     console.log(err);
