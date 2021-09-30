@@ -19,7 +19,7 @@ import { readDonations } from '../../../lib/database/donations';
  */
 exports.lambdaHandler = async (
   event: APIGatewayProxyEvent,
-  context: Context
+  _context: Context
 ): Promise<APIGatewayProxyResult> => {
   try {
     const query = event.queryStringParameters as QueryParams;

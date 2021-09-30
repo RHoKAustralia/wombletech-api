@@ -4,7 +4,7 @@ import { readDonatedItems } from '../../../lib/database/items';
 
 exports.lambdaHandler = async (
   event: APIGatewayProxyEvent,
-  context: Context
+  _context: Context
 ): Promise<APIGatewayProxyResult> => {
   try {
     const { id } = event.pathParameters as { id: string };

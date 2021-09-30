@@ -9,7 +9,7 @@ const { v4: uuidv4 } = require('uuid');
 
 exports.lambdaHandler = async (
   event: APIGatewayProxyEvent,
-  context: Context
+  _context: Context
 ): Promise<APIGatewayProxyResult> => {
   try {
     const { id } = event.pathParameters as { id: string };

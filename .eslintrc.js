@@ -12,7 +12,13 @@ module.exports = {
     "prettier"
   ],
   "rules": {
-    "no-console": 0,       // Means warning
-    "prettier/prettier": 2 // Means error
+    "no-console": 0,       // Means ignore
+    "prettier/prettier": 2, // Means error
+    "@typescript-eslint/no-unused-vars": [
+      "warn", { 
+        "argsIgnorePattern": "^_", 
+        "ignoreRestSiblings": true 
+      }
+    ],
   }
 }
