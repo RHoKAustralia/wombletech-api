@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import { Configuration } from 'webpack';
-const glob = require('glob');
+import glob from 'glob';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const mode = isProduction ? 'production' : 'development';
@@ -9,14 +9,15 @@ console.info(`Build type: ${mode}`);
 type LambdaFolder = {
   path: string;
   name: string;
-}
+};
 
 const expr = /\.\/src\/(.+)\/app.ts$/;
-const paths: LambdaFolder[] = glob.sync('./src/**/app.ts')
+const paths: LambdaFolder[] = glob
+  .sync('./src/**/app.ts')
   .map((path: string) => path.match(expr))
   .map((match: any) => ({ path: match[0], name: match[1] }));
 
-console.log(paths);  
+console.log(paths);
 
 const config: Configuration = {
   mode: mode,
@@ -33,11 +34,13 @@ const config: Configuration = {
     devtoolModuleFilenameTemplate: '[absolute-resource-path]',
   },
   module: {
-    rules: [{ 
-      test: /\.ts$/, 
-      loader: 'ts-loader',
-      exclude: /node_modules/
-    }],
+    rules: [
+      {
+        test: /\.ts$/,
+        loader: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
   },
   resolve: {
     extensions: ['.js', '.ts'],

@@ -1,13 +1,9 @@
-import {
-  APIGatewayProxyEvent,
-  APIGatewayProxyResult,
-  Context,
-} from "aws-lambda";
-import { DonationQueryCursor } from "../../../lib/types/donation";
-import { QueryParams } from "../../lib/types";
-import { createResponseBody } from "../../lib/response";
-import { decode } from "../../../lib/encoding";
-import { readDonations } from "../../../lib/database/donations";
+import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
+import { DonationQueryCursor } from '../../../lib/types/donation';
+import { QueryParams } from '../../lib/types';
+import { createResponseBody } from '../../lib/response';
+import { decode } from '../../../lib/encoding';
+import { readDonations } from '../../../lib/database/donations';
 
 /**
  *
@@ -27,7 +23,7 @@ exports.lambdaHandler = async (
 ): Promise<APIGatewayProxyResult> => {
   try {
     const query = event.queryStringParameters as QueryParams;
-    const {limit, ascending, cursor} = {...query}
+    const { limit, ascending, cursor } = { ...query };
 
     const startKey = (cursor ? JSON.parse(decode(cursor)) : null) as DonationQueryCursor;
     const { donations, newCursor } = await readDonations(limit, ascending, startKey);
@@ -36,6 +32,6 @@ exports.lambdaHandler = async (
     return response;
   } catch (err) {
     console.log(err);
-    return createResponseBody(500,{ message: "Go look at the logs..." });
+    return createResponseBody(500, { message: 'Go look at the logs...' });
   }
 };

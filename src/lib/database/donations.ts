@@ -1,7 +1,7 @@
-import { Donation, DonationQueryCursor } from "../types/donation";
-import { encode } from "../encoding";
-import { serialize } from "../serialize";
-import { documentClient, PimaryKey, TABLE_NAME, updateRecord } from "./common";
+import { Donation, DonationQueryCursor } from '../types/donation';
+import { encode } from '../encoding';
+import { serialize } from '../serialize';
+import { documentClient, PimaryKey, TABLE_NAME, updateRecord } from './common';
 
 export const readDonations = async (
   limit?: number,
@@ -10,9 +10,9 @@ export const readDonations = async (
 ) => {
   const params = {
     TableName: TABLE_NAME,
-    IndexName: "recordType-submitDate-index",
-    KeyConditionExpression: "recordType = :recordType",
-    ExpressionAttributeValues: { ":recordType": "header" },
+    IndexName: 'recordType-submitDate-index',
+    KeyConditionExpression: 'recordType = :recordType',
+    ExpressionAttributeValues: { ':recordType': 'header' },
     ScanIndexForward: ascending ?? false,
     Limit: Math.min(limit ?? 10, 50),
   };
@@ -20,7 +20,7 @@ export const readDonations = async (
   const exclusiveStartKey: any = {};
   if (startKey?.submitDate && startKey.donationId) {
     exclusiveStartKey.ExclusiveStartKey = {
-      recordType: "header",
+      recordType: 'header',
       submitDate: startKey.submitDate,
       donationId: startKey.donationId,
     };
@@ -36,9 +36,7 @@ export const readDonations = async (
   const { recordType, ...lastEvaluatedKey } = {
     ...(data.LastEvaluatedKey as PimaryKey),
   };
-  const newCursor = data.LastEvaluatedKey
-    ? encode(serialize(lastEvaluatedKey))
-    : null;
+  const newCursor = data.LastEvaluatedKey ? encode(serialize(lastEvaluatedKey)) : null;
 
   return { donations, newCursor };
 };
@@ -48,7 +46,7 @@ export const insertDonation = (donation: Donation) => {
 
   const params = {
     TableName: TABLE_NAME,
-    Item: { ...donation, recordType: "header" },
+    Item: { ...donation, recordType: 'header' },
   };
 
   return documentClient.put(params).promise();
@@ -57,7 +55,7 @@ export const insertDonation = (donation: Donation) => {
 export const updateDonation = (donation: Donation) => {
   const { donationId, submitDate, ...attributes } = { ...donation };
 
-  return updateRecord(attributes, { donationId: donation.donationId ?? "", recordType: "header" });
+  return updateRecord(attributes, { donationId: donation.donationId ?? '', recordType: 'header' });
 };
 
 export const donationExists = async (donationId: string) => {
@@ -65,7 +63,7 @@ export const donationExists = async (donationId: string) => {
     TableName: TABLE_NAME,
     Key: {
       donationId: donationId,
-      recordType: "header",
+      recordType: 'header',
     },
   };
 

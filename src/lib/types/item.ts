@@ -1,4 +1,4 @@
-import { JSONSchemaType } from "ajv";
+import { JSONSchemaType } from 'ajv';
 
 export interface Item {
   donationId: string;
@@ -7,17 +7,13 @@ export interface Item {
 }
 
 export const ItemSchema: JSONSchemaType<Item> = {
-  $id: "item.json#",
-  type: "object",
+  $id: 'item.json#',
+  type: 'object',
   properties: {
-    donationId: { type: "string", format: "uuid" },
-    itemId: { type: "string", format: "uuid" },
-    description: { type: "string" },
+    donationId: { type: 'string', format: 'uuid' },
+    itemId: { type: 'string', format: 'uuid' },
+    description: { type: 'string' },
   },
-  required: [
-    "donationId",
-    "itemId",
-    "description"
-  ],
+  required: ['donationId', 'itemId', 'description'],
   additionalProperties: false,
 };

@@ -1,18 +1,17 @@
-import { Item } from "../types/item";
-import { documentClient, PimaryKey, TABLE_NAME, updateRecord } from "./common";
+import { Item } from '../types/item';
+import { documentClient, PimaryKey, TABLE_NAME, updateRecord } from './common';
 
 export const readDonatedItems = async (donationId: string) => {
   const params = {
     TableName: TABLE_NAME,
-    KeyConditionExpression:
-      "#donationId = :donationId AND begins_with(#recordType, :recordType)",
+    KeyConditionExpression: '#donationId = :donationId AND begins_with(#recordType, :recordType)',
     ExpressionAttributeNames: {
-      "#recordType": "recordType",
-      "#donationId": "donationId",
+      '#recordType': 'recordType',
+      '#donationId': 'donationId',
     },
     ExpressionAttributeValues: {
-      ":recordType": "item_",
-      ":donationId": donationId,
+      ':recordType': 'item_',
+      ':donationId': donationId,
     },
   };
 
@@ -28,7 +27,7 @@ export const readDonatedItems = async (donationId: string) => {
 
 export const insertDonatedItem = (item: Item) => {
   const params = {
-    TableName: "wombletech_donations_type",
+    TableName: TABLE_NAME,
     Item: { ...item, recordType: `item_${item.itemId}` },
   };
 
@@ -39,7 +38,7 @@ export const updateDonatedItem = (item: Item) => {
   const { donationId, ...attributes } = { ...item };
 
   return updateRecord(attributes, {
-    donationId: item.donationId ?? "",
+    donationId: item.donationId ?? '',
     recordType: `item_${item.itemId}`,
   });
 };

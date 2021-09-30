@@ -1,3 +1,3 @@
-export const serialize = (obj: any): string => {
+export const serialize = (obj: unknown): string => {
   return JSON.stringify(obj, null, 2);
 };

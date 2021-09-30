@@ -1,13 +1,10 @@
-import {
-  APIGatewayProxyEvent,
-  APIGatewayProxyResult,
-  Context,
-} from "aws-lambda";
-import { insertDonation } from "../../../lib/database/donations";
-import { Donation } from "../../../lib/types/donation";
-import { createResponseBody } from "../../lib/response";
-import { validateDonation } from "../../lib/validate";
-const { v4: uuidv4 } = require("uuid");
+import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
+import { insertDonation } from '../../../lib/database/donations';
+import { Donation } from '../../../lib/types/donation';
+import { createResponseBody } from '../../lib/response';
+import { validateDonation } from '../../lib/validate';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { v4: uuidv4 } = require('uuid');
 
 /**
  *
@@ -26,20 +23,20 @@ exports.lambdaHandler = async (
   context: Context
 ): Promise<APIGatewayProxyResult> => {
   try {
-    const donation: Donation = JSON.parse(event.body ?? "{}");
+    const donation: Donation = JSON.parse(event.body ?? '{}');
     donation.donationId = uuidv4().toString();
 
     const { valid, errors } = validateDonation(donation);
     if (!valid) {
       return createResponseBody(400, { message: errors });
     }
-    
+
     await insertDonation(donation);
 
     const response = createResponseBody(200, donation);
     return response;
   } catch (err) {
     console.log(err);
-    return createResponseBody(500,{ message: "Go look at the logs..." });
+    return createResponseBody(500, { message: 'Go look at the logs...' });
   }
 };

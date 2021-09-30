@@ -1,12 +1,8 @@
-import {
-  APIGatewayProxyEvent,
-  APIGatewayProxyResult,
-  Context,
-} from "aws-lambda";
-import { updateDonation } from "../../../lib/database/donations";
-import { Donation } from "../../../lib/types/donation";
-import { createResponseBody } from "../../lib/response";
-import { validateDonation } from "../../lib/validate";
+import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
+import { updateDonation } from '../../../lib/database/donations';
+import { Donation } from '../../../lib/types/donation';
+import { createResponseBody } from '../../lib/response';
+import { validateDonation } from '../../lib/validate';
 
 /**
  *
@@ -25,7 +21,7 @@ exports.lambdaHandler = async (
   context: Context
 ): Promise<APIGatewayProxyResult> => {
   try {
-    const donation: Donation = JSON.parse(event.body ?? "{}");
+    const donation: Donation = JSON.parse(event.body ?? '{}');
 
     const { valid, errors } = validateDonation(donation);
     if (!valid) {
@@ -38,6 +34,6 @@ exports.lambdaHandler = async (
     return response;
   } catch (err) {
     console.log(err);
-    return createResponseBody(500,{ message: "Go look at the logs..." });
+    return createResponseBody(500, { message: 'Go look at the logs...' });
   }
 };

@@ -1,4 +1,4 @@
-import { JSONSchemaType } from "ajv";
+import { JSONSchemaType } from 'ajv';
 
 export interface DonationQueryCursor {
   donationId?: string;
@@ -18,28 +18,28 @@ export interface Donation {
 }
 
 export const DonationSchema: JSONSchemaType<Donation> = {
-  $id: "donation.json#",
-  type: "object",
+  $id: 'donation.json#',
+  type: 'object',
   properties: {
-    donationId: { type: "string", format: "uuid" },
-    name: { type: "string" },
-    email: { type: "string", format: "email" },
-    phoneNumber: { type: "string" },
-    suburb: { type: "string" },
-    region: { type: "string" },
-    donationType: { type: "string" },
-    description: { type: "string" },
-    submitDate: { type: "string", nullable: true, format: "date-time" },
+    donationId: { type: 'string', format: 'uuid' },
+    name: { type: 'string' },
+    email: { type: 'string', format: 'email' },
+    phoneNumber: { type: 'string' },
+    suburb: { type: 'string' },
+    region: { type: 'string' },
+    donationType: { type: 'string' },
+    description: { type: 'string' },
+    submitDate: { type: 'string', nullable: true, format: 'date-time' },
   },
   required: [
-    "donationId",
-    "name",
-    "email",
-    "phoneNumber",
-    "suburb",
-    "region",
-    "donationType",
-    "description",
+    'donationId',
+    'name',
+    'email',
+    'phoneNumber',
+    'suburb',
+    'region',
+    'donationType',
+    'description',
   ],
   additionalProperties: false,
 };
