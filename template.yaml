@@ -29,12 +29,18 @@ Parameters:
 Resources:
   IncomingEmailBucketName:
     Type: 'AWS::S3::Bucket'
+    DependsOn:
+      - NewIncomingEmailInvokeLambdaPermission
     Properties:
       BucketName: !Ref EmailBucketName
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Function: !GetAtt NewIncomingEmailFunction.Arn
+            Event: 's3:ObjectCreated:*'
 
-  IncomingEmailBucketPolicy:    
+  IncomingEmailBucketPolicy:
     Type: AWS::S3::BucketPolicy
-    Properties: 
+    Properties:
       Bucket: !Ref EmailBucketName
       PolicyDocument:
         Version: 2012-10-17
@@ -178,6 +184,25 @@ Resources:
                 - admin-ui/admin
       Role: !GetAtt WombletechRHoKFunctionRole.Arn
 
+  NewIncomingEmailFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      Handler: app.lambdaHandler
+      CodeUri: dist/backend/email/newIncomingEmail
+      Environment:
+        Variables:
+          TARGET_REGION: !Sub '${AWS::Region}'
+      Role: !GetAtt WombletechRHoKFunctionRole.Arn
+
+  NewIncomingEmailInvokeLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !Ref NewIncomingEmailFunction
+      Principal: s3.amazonaws.com
+      SourceArn: !Sub 'arn:aws:s3:::${EmailBucketName}'
+      SourceAccount: !Ref AWS::AccountId
+
   WombletechRHoKFunctionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -199,7 +224,7 @@ Resources:
                 Action:
                   - logs:*
                 Resource: arn:aws:logs:*:*:*
-        - PolicyName: accessWombleTechDynamoDB 
+        - PolicyName: accessWombleTechDynamoDB
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -207,6 +232,14 @@ Resources:
                 Action:
                   - dynamodb:*
                 Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:*:table/wombletech*'
+        - PolicyName: getS3Objects
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                Resource: !Sub 'arn:aws:s3:::${EmailBucketName}/*'
 
   RestApi:
     Type: AWS::Serverless::Api # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-api.html
@@ -222,8 +255,8 @@ Resources:
         Authorizers:
           CognitoAuthorizer:
             AuthType: "COGNITO_USER_POOLS"
-            UserPoolArn: 
-              - !Sub 'arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${AWS::Region}_${CognitoSlug}' 
+            UserPoolArn:
+              - !Sub 'arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${AWS::Region}_${CognitoSlug}'
             Identity:
               Header: 'Authorization'
 
