@@ -4,8 +4,7 @@ import { validateItem } from '../../lib/validate';
 import { Item } from '../../../lib/types/item';
 import { donationExists } from '../../../lib/database/donations';
 import { insertDonatedItem } from '../../../lib/database/items';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { v4: uuidv4 } = require('uuid');
+import { generateIdentifier } from '../../../lib/identifier';
 
 exports.lambdaHandler = async (
   event: APIGatewayProxyEvent,
@@ -15,7 +14,7 @@ exports.lambdaHandler = async (
     const { id } = event.pathParameters as { id: string };
 
     const item: Item = JSON.parse(event.body ?? '{}');
-    item.itemId = uuidv4().toString();
+    item.itemId = generateIdentifier();
     item.donationId = id;
 
     const { valid, errors } = validateItem(item);

@@ -10,8 +10,8 @@ export const ItemSchema: JSONSchemaType<Item> = {
   $id: 'item.json#',
   type: 'object',
   properties: {
-    donationId: { type: 'string', format: 'uuid' },
-    itemId: { type: 'string', format: 'uuid' },
+    donationId: { type: 'string' },
+    itemId: { type: 'string' },
     description: { type: 'string' },
   },
   required: ['donationId', 'itemId', 'description'],

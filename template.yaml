@@ -43,6 +43,11 @@ Resources:
         LambdaConfigurations:
           - Function: !GetAtt NewIncomingEmailFunction.Arn
             Event: 's3:ObjectCreated:*'
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: incoming/
 
   IncomingEmailBucketPolicy:
     Type: AWS::S3::BucketPolicy

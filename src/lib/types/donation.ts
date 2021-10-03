@@ -21,7 +21,7 @@ export const DonationSchema: JSONSchemaType<Donation> = {
   $id: 'donation.json#',
   type: 'object',
   properties: {
-    donationId: { type: 'string', format: 'uuid' },
+    donationId: { type: 'string' },
     name: { type: 'string' },
     email: { type: 'string', format: 'email' },
     phoneNumber: { type: 'string' },

@@ -4,8 +4,7 @@ import { insertDonation } from '../../../lib/database/donations';
 import { Donation } from '../../../lib/types/donation';
 import { createResponseBody } from '../../lib/response';
 import { validateDonation } from '../../lib/validate';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { v4: uuidv4 } = require('uuid');
+import { generateIdentifier } from '../../../lib/identifier';
 
 /**
  *
@@ -36,7 +35,7 @@ exports.lambdaHandler = async (
 ): Promise<APIGatewayProxyResult> => {
   try {
     const donation: Donation = JSON.parse(event.body ?? '{}');
-    donation.donationId = uuidv4().toString();
+    donation.donationId = generateIdentifier();
 
     const { valid, errors } = validateDonation(donation);
     if (!valid) {
