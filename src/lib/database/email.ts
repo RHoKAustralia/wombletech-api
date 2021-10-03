@@ -14,3 +14,15 @@ export const insertEmailToUnsortedQueue = (
 
   return documentClient.put(params).promise();
 };
+
+export const attachEmailToDonation = (
+  donationId: string,
+  email: Email
+): Promise<PromiseResult<PutItemOutput, AWSError>> => {
+  const params = {
+    TableName: TABLE_NAME,
+    Item: { donationId: donationId, recordType: `email_${email.key}`, ...email },
+  };
+
+  return documentClient.put(params).promise();
+};
