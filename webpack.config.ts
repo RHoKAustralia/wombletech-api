@@ -46,6 +46,13 @@ const config: Configuration = {
     extensions: ['.js', '.ts'],
   },
   target: 'node',
+  plugins: [
+    function () {
+      this.hooks.done.tap('BuildStatsPlugin', function () {
+        console.log('>>> ' + new Date().toLocaleTimeString() + ' <<<');
+      });
+    },
+  ],
 };
 
 export default config;
