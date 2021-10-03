@@ -41,7 +41,7 @@ export const readDonations = async (
   return { donations, newCursor };
 };
 
-export const insertDonation = (donation: Donation) => {
+export const insertDonation = async (donation: Donation): Promise<void> => {
   donation.submitDate = new Date().toISOString();
 
   const params = {
@@ -49,16 +49,16 @@ export const insertDonation = (donation: Donation) => {
     Item: { ...donation, recordType: 'header' },
   };
 
-  return documentClient.put(params).promise();
+  await documentClient.put(params).promise();
 };
 
-export const updateDonation = (donation: Donation) => {
+export const updateDonation = async (donation: Donation): Promise<void> => {
   const { donationId, submitDate, ...attributes } = { ...donation };
 
-  return updateRecord(attributes, { donationId: donation.donationId ?? '', recordType: 'header' });
+  await updateRecord(attributes, { donationId: donation.donationId ?? '', recordType: 'header' });
 };
 
-export const donationExists = async (donationId: string) => {
+export const donationExists = async (donationId: string): Promise<boolean> => {
   const params = {
     TableName: TABLE_NAME,
     Key: {
@@ -69,4 +69,19 @@ export const donationExists = async (donationId: string) => {
 
   const header = await documentClient.get(params).promise();
   return Object.keys(header).length > 0;
+};
+
+export const getDonation = async (donationId: string): Promise<Donation> => {
+  const params = {
+    TableName: TABLE_NAME,
+    Key: {
+      donationId: donationId,
+      recordType: 'header',
+    },
+  };
+
+  const header = await documentClient.get(params).promise();
+
+  const { recordType, ...remaining } = { ...(header.Item as PimaryKey) };
+  return remaining as Donation;
 };

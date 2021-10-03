@@ -25,6 +25,12 @@ Parameters:
   EmailBucketName:
     Type: String
     Default: wombletech-rhok-email-incoming
+  NewDonationTopicName:
+    Type: String
+    Default: wombletech-rhok-new-donation
+  MxDomain:
+    Type: String
+    Default: mailer.sample.com
 
 Resources:
   IncomingEmailBucketName:
@@ -89,6 +95,7 @@ Resources:
       Environment:
         Variables:
           TARGET_REGION: !Sub '${AWS::Region}'
+          NEW_DONATION_TOPIC: !Ref NewDonationReceivedNotificationTopic
       Events:
         Api:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -188,7 +195,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       Handler: app.lambdaHandler
-      CodeUri: dist/backend/email/newIncomingEmail
+      CodeUri: dist/backend/s3/newIncomingEmail
       Environment:
         Variables:
           TARGET_REGION: !Sub '${AWS::Region}'
@@ -202,6 +209,51 @@ Resources:
       Principal: s3.amazonaws.com
       SourceArn: !Sub 'arn:aws:s3:::${EmailBucketName}'
       SourceAccount: !Ref AWS::AccountId
+
+  NewDonationReceivedNotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: !Sub "${NewDonationTopicName}"
+      TopicName: !Sub "${NewDonationTopicName}"
+      Subscription:
+        - Protocol: Lambda
+          Endpoint: !GetAtt SendThankyouResponseFunction.Arn
+
+  NewDonationReceivedNotificationTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics:
+        - !Ref NewDonationReceivedNotificationTopic
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 'sns:Publish'
+            Effect: Allow
+            Resource: !Ref NewDonationReceivedNotificationTopic
+            Principal:
+              AWS: '*'
+            Condition:
+              ArnLike:
+                AWS:SourceArn: !Sub 'arn:aws:*:*:${AWS::AccountId}:*'
+
+  SendThankyouResponseFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      Handler: app.lambdaHandler
+      CodeUri: dist/backend/sns/newDonationReceived/sendThankyouResponse
+      Environment:
+        Variables:
+          TARGET_REGION: !Sub '${AWS::Region}'
+          MX_DOMAIN: !Sub '${MxDomain}'
+      Role: !GetAtt WombletechRHoKFunctionRole.Arn
+
+  SendThankyouResponseInvokeLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !Ref SendThankyouResponseFunction
+      Principal: sns.amazonaws.com
 
   WombletechRHoKFunctionRole:
     Type: AWS::IAM::Role
@@ -240,6 +292,22 @@ Resources:
                 Action:
                   - s3:GetObject
                 Resource: !Sub 'arn:aws:s3:::${EmailBucketName}/*'
+        - PolicyName: publishSNSNotifications
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource: !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*'
+        - PolicyName: sendSESEmails
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ses:Send*
+                Resource: '*'
 
   RestApi:
     Type: AWS::Serverless::Api # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-api.html
@@ -288,3 +356,6 @@ Outputs:
   WombletechRHoKFunctionRole:
     Description: "IAM Role created for Lambdas"
     Value: !GetAtt WombletechRHoKFunctionRole.Arn
+  NewDonationReceivedNotificationTopic:
+    Description: "New Donation Received Notification Topic"
+    Value: !Ref NewDonationReceivedNotificationTopic

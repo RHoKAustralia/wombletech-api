@@ -1,3 +1,4 @@
+import AWS from 'aws-sdk';
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import { insertDonation } from '../../../lib/database/donations';
 import { Donation } from '../../../lib/types/donation';
@@ -18,6 +19,17 @@ const { v4: uuidv4 } = require('uuid');
  * @returns {Object} object - API Gateway Lambda Proxy Output Format
  *
  */
+
+const notifyNewDonationReceived = async (donation: Donation): Promise<void> => {
+  const params = {
+    TopicArn: process.env.NEW_DONATION_TOPIC,
+    Message: JSON.stringify({ donationId: donation.donationId }),
+  };
+
+  const sns = new AWS.SNS({ region: process.env.TARGET_REGION });
+  await sns.publish(params).promise();
+};
+
 exports.lambdaHandler = async (
   event: APIGatewayProxyEvent,
   _context: Context
@@ -32,6 +44,8 @@ exports.lambdaHandler = async (
     }
 
     await insertDonation(donation);
+
+    await notifyNewDonationReceived(donation);
 
     const response = createResponseBody(200, donation);
     return response;
