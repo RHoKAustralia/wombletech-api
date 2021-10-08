@@ -1,8 +1,8 @@
 import { S3CreateEvent } from 'aws-lambda';
 import aws from 'aws-sdk';
-import { attachEmailToDonation, insertEmailToUnsortedQueue } from '../../../lib/database/email';
+import { attachEmailToDonation, insertEmailToUnsortedQueue } from '../../../lib/simpledb/emails';
 import { simpleParser, ParsedMail } from 'mailparser';
-import { donationExists } from '../../../lib/database/donations';
+import { donationExists } from '../../../lib/simpledb/donations';
 
 const s3 = new aws.S3({ apiVersion: '2006-03-01' });
 

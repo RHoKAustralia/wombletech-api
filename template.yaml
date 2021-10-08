@@ -281,14 +281,6 @@ Resources:
                 Action:
                   - logs:*
                 Resource: arn:aws:logs:*:*:*
-        - PolicyName: accessWombleTechDynamoDB
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - dynamodb:*
-                Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:*:table/wombletech*'
         - PolicyName: getS3Objects
           PolicyDocument:
             Version: '2012-10-17'
@@ -313,6 +305,14 @@ Resources:
                 Action:
                   - ses:Send*
                 Resource: '*'
+        - PolicyName: accessSimpleDB
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sdb:*
+                Resource: !Sub 'arn:aws:sdb:${AWS::Region}:${AWS::AccountId}:domain/*'
 
   RestApi:
     Type: AWS::Serverless::Api # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-api.html

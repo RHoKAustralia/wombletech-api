@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
-import { insertDonation } from '../../../lib/database/donations';
+import { insertDonation } from '../../../lib/simpledb/donations';
 import { Donation } from '../../../lib/types/donation';
 import { createResponseBody } from '../../lib/response';
 import { validateDonation } from '../../lib/validate';

@@ -1,12 +1,8 @@
 import { JSONSchemaType } from 'ajv';
 
-export interface DonationQueryCursor {
-  donationId?: string;
-  submitDate?: string;
-}
-
 export interface Donation {
   donationId: string;
+  active: boolean;
   name: string;
   email: string;
   phoneNumber: string;
@@ -22,6 +18,7 @@ export const DonationSchema: JSONSchemaType<Donation> = {
   type: 'object',
   properties: {
     donationId: { type: 'string' },
+    active: { type: 'boolean' },
     name: { type: 'string' },
     email: { type: 'string', format: 'email' },
     phoneNumber: { type: 'string' },

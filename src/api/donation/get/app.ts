@@ -1,9 +1,8 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
-import { DonationQueryCursor } from '../../../lib/types/donation';
 import { QueryParams } from '../../lib/types';
 import { createResponseBody } from '../../lib/response';
-import { decode } from '../../../lib/encoding';
-import { readDonations } from '../../../lib/database/donations';
+import { readDonations } from '../../../lib/simpledb/donations';
+import { decode, encode } from '../../../lib/encoding';
 
 /**
  *
@@ -25,10 +24,9 @@ exports.lambdaHandler = async (
     const query = event.queryStringParameters as QueryParams;
     const { limit, ascending, cursor } = { ...query };
 
-    const startKey = (cursor ? JSON.parse(decode(cursor)) : null) as DonationQueryCursor;
-    const { donations, newCursor } = await readDonations(limit, ascending, startKey);
+    const { items, next } = await readDonations(limit, ascending, decode(cursor));
 
-    const response = createResponseBody(200, { items: donations ?? [], cursor: newCursor });
+    const response = createResponseBody(200, { items: items, cursor: encode(next) || null });
     return response;
   } catch (err) {
     console.log(err);

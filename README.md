@@ -6,8 +6,8 @@ Currently using AWS region ap-southeast-2
 - Configure `~/.aws/config`
 
 ## AWS prep
-Create one dynamodb tables (expect this to change)
-1. wombletech_donations (donationId)
+Create one simpledb table in the same region as the lambdas
+1. wombletech
 
 ## security
 
@@ -18,9 +18,9 @@ Using AWS Cognito
 Using AWS SES
 - you'll need access to your DNS to enter records from the current region (sending) and us-east-1 (receiving)
 
-NOTE: 
+NOTE:
 - incoming email support is only suppported in a few regions e.g. us-east-1
-- to avoid messing with current MX configuration use a subdomain to send emails to and from eg mailer.<yourdomain.com> 
+- to avoid messing with current MX configuration use a subdomain to send emails to and from eg mailer.<yourdomain.com>
 
 # Developer flow
 ## local testing (build and local testing)
@@ -79,7 +79,7 @@ Supports paging using a cursor (see DynamoDB and ExclusiveStartKey)
 
 The items that make up a donation, supports GET(list), POST(create), PUT(update)
 
-### schema 
+### schema
 
 ```json
 {

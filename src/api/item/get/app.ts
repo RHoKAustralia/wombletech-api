@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import { createResponseBody } from '../../lib/response';
-import { readDonatedItems } from '../../../lib/database/items';
+import { readDonatedItems } from '../../../lib/simpledb/items';
 
 exports.lambdaHandler = async (
   event: APIGatewayProxyEvent,
@@ -9,9 +9,9 @@ exports.lambdaHandler = async (
   try {
     const { id } = event.pathParameters as { id: string };
 
-    const items = await readDonatedItems(id);
+    const { items } = await readDonatedItems(id);
 
-    const response = createResponseBody(200, { item: items ?? [] });
+    const response = createResponseBody(200, { item: items });
     return response;
   } catch (err) {
     console.log(err);

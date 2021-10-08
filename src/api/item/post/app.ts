@@ -2,8 +2,8 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda
 import { createResponseBody } from '../../lib/response';
 import { validateItem } from '../../lib/validate';
 import { Item } from '../../../lib/types/item';
-import { donationExists } from '../../../lib/database/donations';
-import { insertDonatedItem } from '../../../lib/database/items';
+import { donationExists } from '../../../lib/simpledb/donations';
+import { insertDonatedItem } from '../../../lib/simpledb/items';
 import { generateIdentifier } from '../../../lib/identifier';
 
 exports.lambdaHandler = async (

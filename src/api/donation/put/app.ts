@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
-import { updateDonation } from '../../../lib/database/donations';
+import { updateDonation } from '../../../lib/simpledb/donations';
 import { Donation } from '../../../lib/types/donation';
 import { createResponseBody } from '../../lib/response';
 import { validateDonation } from '../../lib/validate';

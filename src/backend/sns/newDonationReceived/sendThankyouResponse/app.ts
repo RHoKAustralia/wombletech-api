@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
 import { SNSHandler } from 'aws-lambda';
-import { getDonation } from '../../../../lib/database/donations';
+import { getDonation } from '../../../../lib/simpledb/donations';
 import { Donation } from '../../../../lib/types/donation';
 
 const mxDomain = process.env.MX_DOMAIN;
@@ -34,7 +34,9 @@ export const lambdaHandler: SNSHandler = async (event) => {
 
     const donation = await getDonation(JSON.parse(message).donationId as string);
 
-    await sendThankyouEmail(donation);
+    if (donation) {
+      await sendThankyouEmail(donation);
+    }
   } catch (err) {
     console.error(err);
   }
