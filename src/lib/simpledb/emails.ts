@@ -3,7 +3,7 @@ import { Email } from '../types/email';
 
 const isotope = new Isotope<Email>({
   domain: 'wombletech',
-  key: 'key',
+  key: 'emailId',
 });
 
 export const insertEmailToUnsortedQueue = async (email: Email): Promise<void> => {

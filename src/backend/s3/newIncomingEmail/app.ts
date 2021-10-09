@@ -3,6 +3,7 @@ import aws from 'aws-sdk';
 import { attachEmailToDonation, insertEmailToUnsortedQueue } from '../../../lib/simpledb/emails';
 import { simpleParser, ParsedMail } from 'mailparser';
 import { donationExists } from '../../../lib/simpledb/donations';
+import { generateIdentifier } from '../../../lib/identifier';
 
 const s3 = new aws.S3({ apiVersion: '2006-03-01' });
 
@@ -23,7 +24,8 @@ const processEmail = async (key: string, parsedEmail: ParsedMail): Promise<void>
   const subject = parsedEmail.subject ?? '(unknown subject)';
 
   const emailDetails = {
-    key: key,
+    emailId: generateIdentifier(),
+    s3Key: key,
     receiptTime: new Date().toISOString(),
     sender: parsedEmail.from?.value[0].address ?? '(unknown sender)',
     subject: subject,

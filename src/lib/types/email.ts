@@ -1,6 +1,7 @@
 export interface Email {
   donationId?: string;
-  key: string;
+  emailId: string;
+  s3Key: string;
   sender: string;
   subject: string;
   receiptTime: string;
