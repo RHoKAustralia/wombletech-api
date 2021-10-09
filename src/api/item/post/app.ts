@@ -6,7 +6,7 @@ import { donationExists } from '../../../lib/simpledb/donations';
 import { insertDonatedItem } from '../../../lib/simpledb/items';
 import { generateIdentifier } from '../../../lib/identifier';
 
-exports.lambdaHandler = async (
+export const lambdaHandler = async (
   event: APIGatewayProxyEvent,
   _context: Context
 ): Promise<APIGatewayProxyResult> => {

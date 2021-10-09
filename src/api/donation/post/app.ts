@@ -29,7 +29,7 @@ const notifyNewDonationReceived = async (donation: Donation): Promise<void> => {
   await sns.publish(params).promise();
 };
 
-exports.lambdaHandler = async (
+export const lambdaHandler = async (
   event: APIGatewayProxyEvent,
   _context: Context
 ): Promise<APIGatewayProxyResult> => {

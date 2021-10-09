@@ -37,8 +37,9 @@ const config: Configuration = {
     rules: [
       {
         test: /\.ts$/,
-        loader: 'ts-loader',
+        loader: 'esbuild-loader',
         exclude: /node_modules/,
+        options: { loader: 'ts', target: 'es2015' },
       },
     ],
   },

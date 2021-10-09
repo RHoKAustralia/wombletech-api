@@ -16,7 +16,7 @@ import { decode, encode } from '../../../lib/encoding';
  * @returns {Object} object - API Gateway Lambda Proxy Output Format
  *
  */
-exports.lambdaHandler = async (
+export const lambdaHandler = async (
   event: APIGatewayProxyEvent,
   _context: Context
 ): Promise<APIGatewayProxyResult> => {

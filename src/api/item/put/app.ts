@@ -4,7 +4,7 @@ import { createResponseBody } from '../../lib/response';
 import { validateItem } from '../../lib/validate';
 import { updateDonatedItem } from '../../../lib/simpledb/items';
 
-exports.lambdaHandler = async (
+export const lambdaHandler = async (
   event: APIGatewayProxyEvent,
   _context: Context
 ): Promise<APIGatewayProxyResult> => {

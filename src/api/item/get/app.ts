@@ -2,7 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda
 import { createResponseBody } from '../../lib/response';
 import { readDonatedItems } from '../../../lib/simpledb/items';
 
-exports.lambdaHandler = async (
+export const lambdaHandler = async (
   event: APIGatewayProxyEvent,
   _context: Context
 ): Promise<APIGatewayProxyResult> => {
