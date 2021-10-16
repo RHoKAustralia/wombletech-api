@@ -29,16 +29,14 @@ export const insertDonation = async (donation: Donation): Promise<void> => {
 
 export const updateDonation = async (donation: Donation): Promise<void> => {
   const { submitDate, ...remaining } = donation;
-
   await isotope.put(remaining);
 };
 
-export const donationExists = async (donationId: string): Promise<boolean> => {
-  const donation = await isotope.get(donationId);
-
-  return !!donation;
+export const getDonation = (donationId: string): Promise<Donation | undefined> => {
+  return isotope.get(donationId);
 };
 
-export const getDonation = async (donationId: string): Promise<Donation | undefined> => {
-  return await isotope.get(donationId);
+export const donationExists = async (donationId: string): Promise<boolean> => {
+  const donation = await getDonation(donationId);
+  return !!donation;
 };

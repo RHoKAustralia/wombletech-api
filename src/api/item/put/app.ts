@@ -2,7 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda
 import { Item } from '../../../lib/types/item';
 import { createResponseBody } from '../../lib/response';
 import { validateItem } from '../../lib/validate';
-import { updateDonatedItem } from '../../../lib/simpledb/items';
+import { updateDonatedItem, itemExists } from '../../../lib/simpledb';
 
 export const lambdaHandler = async (
   event: APIGatewayProxyEvent,
@@ -18,9 +18,14 @@ export const lambdaHandler = async (
       return createResponseBody(400, { message: errors });
     }
 
+    const exists = await itemExists(item.donationId, item.itemId);
+    if (!exists) {
+      return createResponseBody(404, {});
+    }
+
     await updateDonatedItem(item);
 
-    const { donationId, ...attributes } = { ...item };
+    const { ...attributes } = { ...item };
     const response = createResponseBody(200, attributes);
     return response;
   } catch (err) {

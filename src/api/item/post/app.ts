@@ -2,8 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda
 import { createResponseBody } from '../../lib/response';
 import { validateItem } from '../../lib/validate';
 import { Item } from '../../../lib/types/item';
-import { donationExists } from '../../../lib/simpledb/donations';
-import { insertDonatedItem } from '../../../lib/simpledb/items';
+import { insertDonatedItem, donationExists } from '../../../lib/simpledb';
 import { generateIdentifier } from '../../../lib/identifier';
 
 export const lambdaHandler = async (
@@ -24,8 +23,7 @@ export const lambdaHandler = async (
 
     const exists = await donationExists(item.donationId);
     if (!exists) {
-      const response = createResponseBody(400, { message: 'Header record does not exist' });
-      return response;
+      return createResponseBody(404, {});
     }
 
     await insertDonatedItem(item);
