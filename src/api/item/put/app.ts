@@ -9,7 +9,7 @@ export const lambdaHandler = async (
   _context: Context
 ): Promise<APIGatewayProxyResult> => {
   try {
-    const { id } = event.pathParameters as { id: string };
+    const { donationId: id } = event.pathParameters as { donationId: string };
     const item: Item = JSON.parse(event.body ?? '{}');
     item.donationId = id;
 

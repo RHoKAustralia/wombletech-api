@@ -166,7 +166,7 @@ Resources:
         Api:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /donation/{id}/item
+            Path: /donation/{donationId}/item
             Method: get
             RestApiId: !Ref RestApi
             Auth:
@@ -187,7 +187,7 @@ Resources:
         Api:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /donation/{id}/item
+            Path: /donation/{donationId}/item
             Method: post
             RestApiId: !Ref RestApi
             Auth:
@@ -208,7 +208,7 @@ Resources:
         Api:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /donation/{id}/item
+            Path: /donation/{donationId}/item
             Method: put
             RestApiId: !Ref RestApi
             Auth:

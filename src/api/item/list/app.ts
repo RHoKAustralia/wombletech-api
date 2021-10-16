@@ -7,9 +7,9 @@ export const lambdaHandler = async (
   _context: Context
 ): Promise<APIGatewayProxyResult> => {
   try {
-    const { id } = event.pathParameters as { id: string };
+    const { donationId } = event.pathParameters as { donationId: string };
 
-    const { items } = await readDonatedItems(id);
+    const { items } = await readDonatedItems(donationId);
 
     const response = createResponseBody(200, { item: items });
     return response;
