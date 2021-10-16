@@ -71,6 +71,27 @@ Resources:
                 'aws:Referer':
                   - !Sub "${AWS::AccountId}"
 
+  GetDonationFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      Handler: app.lambdaHandler
+      CodeUri: dist/api/donation/get
+      Environment:
+        Variables:
+          TARGET_REGION: !Sub '${AWS::Region}'
+      Events:
+        Api:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /donation/{donationId}
+            Method: get
+            RestApiId: !Ref RestApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+              AuthorizationScopes:
+                - admin-ui/admin
+      Role: !GetAtt WombletechRHoKFunctionRole.Arn
+
   ListDonationsFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -340,6 +361,9 @@ Outputs:
   WombletechRHoKDonationApi:
     Description: "API Gateway endpoint URL for Prod stage managing donations"
     Value: !Sub "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/${Env}/donation"
+  GetDonationFunction:
+    Description: "Lambda function to get a donation entry"
+    Value: !GetAtt GetDonationFunction.Arn
   ListDonationsFunction:
     Description: "Lambda Function To list donations"
     Value: !GetAtt ListDonationsFunction.Arn
