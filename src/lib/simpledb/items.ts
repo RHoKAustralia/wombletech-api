@@ -8,14 +8,19 @@ const isotope = new Isotope<Item>({
 
 export const readDonatedItems = async (donationId: string): Promise<IsotopeResult<Item>> => {
   const expr = isotope.getQueryBuilder().where('`donationId` = ?', donationId);
-
   return await isotope.select(expr);
 };
 
 export const insertDonatedItem = async (item: Item): Promise<void> => {
-  const { donationId, ...remaining } = item;
-
-  await isotope.put(remaining);
+  await isotope.put(item);
 };
 
-export const updateDonatedItem = insertDonatedItem;
+export const getItem = async (donationId: string, itemId: string): Promise<Item | undefined> => {
+  const item = await isotope.get(itemId);
+  return item?.donationId === donationId ? item : undefined;
+};
+
+export const updateDonatedItem = async (item: Item): Promise<void> => {
+  const { donationId, ...remaining } = item;
+  await isotope.put(remaining);
+};

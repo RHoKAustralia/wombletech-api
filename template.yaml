@@ -154,6 +154,27 @@ Resources:
                 - admin-ui/admin
       Role: !GetAtt WombletechRHoKFunctionRole.Arn
 
+  GetDonatedItemFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      Handler: app.lambdaHandler
+      CodeUri: dist/api/item/get
+      Environment:
+        Variables:
+          TARGET_REGION: !Sub '${AWS::Region}'
+      Events:
+        Api:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /donation/{donationId}/item/{itemId}
+            Method: get
+            RestApiId: !Ref RestApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+              AuthorizationScopes:
+                - admin-ui/admin
+      Role: !GetAtt WombletechRHoKFunctionRole.Arn
+
   ListDonatedItemsFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -373,6 +394,9 @@ Outputs:
   UpdateDonationFunction:
     Description: "Lambda Function To update donations"
     Value: !GetAtt UpdateDonationFunction.Arn
+  GetDonatedItemFunction:
+    Description: "Lambda Function go get a donation item"
+    Value: !GetAtt GetDonatedItemFunction.Arn
   ListDonatedItemsFunction:
     Description: "Lambda Function To list donation items"
     Value: !GetAtt ListDonatedItemsFunction.Arn
