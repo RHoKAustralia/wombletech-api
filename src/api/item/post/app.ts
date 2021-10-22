@@ -1,14 +1,11 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
+import { APIGatewayProxyHandler } from 'aws-lambda';
 import { createResponseBody } from '../../lib/response';
 import { validateItem } from '../../lib/validate';
 import { Item } from '../../../lib/types/item';
 import { insertDonatedItem, donationExists } from '../../../lib/simpledb';
 import { generateIdentifier } from '../../../lib/identifier';
 
-export const lambdaHandler = async (
-  event: APIGatewayProxyEvent,
-  _context: Context
-): Promise<APIGatewayProxyResult> => {
+export const lambdaHandler: APIGatewayProxyHandler = async (event) => {
   try {
     const { donationId: id } = event.pathParameters as { donationId: string };
 

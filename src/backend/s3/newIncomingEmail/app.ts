@@ -1,4 +1,4 @@
-import { S3CreateEvent } from 'aws-lambda';
+import { S3CreateEvent, S3Handler } from 'aws-lambda';
 import aws from 'aws-sdk';
 import { attachEmailToDonation, insertEmailToUnsortedQueue } from '../../../lib/simpledb/emails';
 import { simpleParser, ParsedMail } from 'mailparser';
@@ -43,7 +43,7 @@ const processEmail = async (key: string, parsedEmail: ParsedMail): Promise<void>
   await insertEmailToUnsortedQueue(emailDetails);
 };
 
-export const lambdaHandler = async (event: S3CreateEvent): Promise<void> => {
+export const lambdaHandler: S3Handler = async (event) => {
   try {
     const bucket = event.Records[0].s3.bucket.name;
     const key = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '));

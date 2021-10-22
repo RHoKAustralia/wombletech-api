@@ -1,23 +1,10 @@
 import AWS from 'aws-sdk';
-import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
+import { APIGatewayProxyHandler } from 'aws-lambda';
 import { insertDonation } from '../../../lib/simpledb/donations';
 import { Donation } from '../../../lib/types/donation';
 import { createResponseBody } from '../../lib/response';
 import { validateDonation } from '../../lib/validate';
 import { generateIdentifier } from '../../../lib/identifier';
-
-/**
- *
- * Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
- * @param {Object} event - API Gateway Lambda Proxy Input Format
- *
- * Context doc: https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html
- * @param {Object} context
- *
- * Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
- * @returns {Object} object - API Gateway Lambda Proxy Output Format
- *
- */
 
 const notifyNewDonationReceived = async (donation: Donation): Promise<void> => {
   const params = {
@@ -29,10 +16,7 @@ const notifyNewDonationReceived = async (donation: Donation): Promise<void> => {
   await sns.publish(params).promise();
 };
 
-export const lambdaHandler = async (
-  event: APIGatewayProxyEvent,
-  _context: Context
-): Promise<APIGatewayProxyResult> => {
+export const lambdaHandler: APIGatewayProxyHandler = async (event) => {
   try {
     const donation: Donation = JSON.parse(event.body ?? '{}');
     donation.donationId = generateIdentifier();
