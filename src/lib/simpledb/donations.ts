@@ -1,4 +1,4 @@
-import { Isotope, IsotopeResult } from 'isotopes';
+import { Isotope } from 'isotopes';
 import { Donation } from '../types/donation';
 
 const isotope = new Isotope<Donation>({
@@ -6,11 +6,16 @@ const isotope = new Isotope<Donation>({
   key: 'donationId',
 });
 
+interface ListResult<T> {
+  items: T[];
+  next: string | undefined;
+}
+
 export const readDonations = async (
   limit?: number,
   ascending?: boolean,
   prev?: string
-): Promise<IsotopeResult<Donation>> => {
+): Promise<ListResult<Donation>> => {
   const startDate = '2020-01-01';
   const expr = isotope
     .getQueryBuilder()
@@ -18,7 +23,8 @@ export const readDonations = async (
     .order('`submitDate`', ascending ? 'asc' : 'desc')
     .limit(Math.min(limit ?? 10, 50));
 
-  return await isotope.select(expr, prev);
+  const { items, next } = await isotope.select(expr, prev);
+  return { items, next };
 };
 
 export const insertDonation = async (donation: Donation): Promise<void> => {
