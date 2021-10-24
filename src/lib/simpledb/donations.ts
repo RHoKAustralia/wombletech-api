@@ -4,6 +4,7 @@ import { Donation } from '../types/donation';
 const isotope = new Isotope<Donation>({
   domain: 'wombletech',
   key: 'donationId',
+  type: 'donation',
 });
 
 interface ListResult<T> {

@@ -4,6 +4,7 @@ import { Item } from '../types/item';
 const isotope = new Isotope<Item & { comboId: string }>({
   domain: 'wombletech',
   key: 'comboId',
+  type: 'item',
 });
 
 export const readDonatedItems = async (donationId: string): Promise<IsotopeResult<Item>> => {
