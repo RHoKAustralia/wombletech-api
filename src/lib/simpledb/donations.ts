@@ -1,4 +1,4 @@
-import { Isotope } from 'isotopes';
+import { Isotope } from '@many-monkeys/isotopes';
 import { Donation } from '../types/donation';
 
 const isotope = new Isotope<Donation>({

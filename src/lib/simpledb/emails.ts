@@ -1,4 +1,4 @@
-import { Isotope } from 'isotopes';
+import { Isotope } from '@many-monkeys/isotopes';
 import { Email } from '../types/email';
 
 const isotope = new Isotope<Email>({

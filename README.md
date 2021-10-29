@@ -1,5 +1,3 @@
-NOTE: the current version is using a custom built version of the isotopes package (awaiting PR)
-
 Currently using AWS region ap-southeast-2
 # pre-requisites (TODO)
 - SAM CLI - https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html

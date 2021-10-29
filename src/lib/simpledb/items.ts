@@ -1,4 +1,4 @@
-import { Isotope, IsotopeResult } from 'isotopes';
+import { Isotope, IsotopeResult } from '@many-monkeys/isotopes';
 import { Item } from '../types/item';
 
 const isotope = new Isotope<Item & { comboId: string }>({
