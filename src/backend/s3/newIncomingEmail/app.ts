@@ -1,4 +1,4 @@
-import { S3CreateEvent, S3Handler } from 'aws-lambda';
+import { S3Handler } from 'aws-lambda';
 import aws from 'aws-sdk';
 import { attachEmailToDonation, insertEmailToUnsortedQueue } from '../../../lib/simpledb/emails';
 import { simpleParser, ParsedMail } from 'mailparser';
